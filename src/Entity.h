@@ -37,5 +37,6 @@ public:
 
 	virtual void move() = 0;
     virtual void changeDirection(const sf::Vector2i target) = 0;
+
 	void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 };
