@@ -15,11 +15,8 @@ Level::Level()
 Level::~Level() {}
 
 void Level::registerObserver(GhostObserver* observer) { observers.push_back(observer);}
-
 void Level::registerPacman(PacmanObserver * pacObs) { pacmanObserver = pacObs; }
-
 void Level::notifyObservers(GhostState gs) { for (auto& observer : observers) observer->updateState(gs); }
-
 void Level::notifyObserver(GhostObserver* observer, GhostState gs) { observer->updateState(gs); }
 
 bool Level::readLevel(std::string filePath)
@@ -68,20 +65,18 @@ bool Level::isIntersection(sf::Vector2i coords) const
     return tileGrid[coords.x][coords.y]->intersection;
 }
 
-bool Level::isTeleporter(sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->teleporter; }
+bool Level::gameOver() const { return over; }
 
 sf::Vector2i Level::getPacmanPosition() const { return pacmanCoords; }
 
-void Level::updatePacmanPosition(sf::Vector2i coords) { pacmanCoords = coords; }
-
-bool Level::shouldScatter() // REVISE
+bool Level::shouldScatter()
 {
     // 0-7 (SC) --> 7-27 (CH) --> 27-34 (SC) --> 34-54 (CH) --> 54-59 (SC) --> 59-79 (CH) --> 79-84 (SC) --> CHASE FOREVER*
     double timeEllapsed = scatterChaseTimer.msEllapsed() / 1000.0;
-    if    ((timeEllapsed > 0  && timeEllapsed <= 7)
-        || (timeEllapsed > 27 && timeEllapsed <= 34)
-        || (timeEllapsed > 54 && timeEllapsed <= 59)
-        || (timeEllapsed > 79 && timeEllapsed <= 84)) return true;
+    if    ((timeEllapsed > 0.0  && timeEllapsed <= 7.0)
+        || (timeEllapsed > 27.0 && timeEllapsed <= 34.0)
+        || (timeEllapsed > 54.0 && timeEllapsed <= 59.0)
+        || (timeEllapsed > 79.0 && timeEllapsed <= 84.0)) return true;
     else return false;
 }
 
@@ -89,9 +84,9 @@ void Level::update()
 {
     // Update pacman's position on the grid
     pacmanCoords = pacmanObserver->getGridPos();
-    // If pacman should teleport, notify and provide new grid position (currently only for X) - PACMAN POSITION CHANGES HERE!
+    // If pacman should teleport, notify and provide new grid position (currently only for X)
     if (tileGrid[pacmanCoords.x][pacmanCoords.y]->teleporter) pacmanObserver->teleport(pacmanCoords.x == 0 ? Config::ROWS - 1 : 0);
-    // If pacman ate a big dot, notify ghosts to run - PAUSE SCATTER (if relevant), START HUNTED TIMER??
+    // If pacman ate a big dot, notify ghosts to run
     if (tileGrid[pacmanCoords.x][pacmanCoords.y]->bigDot)
     {
         notifyObservers(GhostState::Frightened);
@@ -102,23 +97,29 @@ void Level::update()
     if (tileGrid[pacmanCoords.x][pacmanCoords.y]->hasADot()) tileGrid[pacmanCoords.x][pacmanCoords.y]->setEaten();
 
     // Check if frightened timer expired, notify ghosts and resume scatter/chase timer
-    if (huntedTimer.isRunning() && huntedTimer.msEllapsed() / 1000.0 > 10.0)  // 10seconds duration?
+    if (huntedTimer.isRunning() && huntedTimer.msEllapsed() / 1000.0 >= 10.0)  // 10seconds duration?
     {
         huntedTimer.stopTimer();
         scatterChaseTimer.resumeTimer();
-        notifyObservers(shouldScatter() ? GhostState::Scatter : GhostState::Chase); // Happens anyway???
+        notifyObservers(shouldScatter() ? GhostState::Scatter : GhostState::Chase);
     }
     else if (!huntedTimer.isRunning()) notifyObservers(shouldScatter() ? GhostState::Scatter : GhostState::Chase);
 
-    for (auto& observer : observers)  // IMPROVE - DISTANCE AS A GLOBAL FUNCTION FOR ONE
+    // Update each ghost's state based on its current state, distance to pacman or distance to its home
+    for (auto& observer : observers)
     {
-        sf::Vector2f pacmanPos = { pacmanCoords.x * Config::ENTITY_SIZE, pacmanCoords.y * Config::ENTITY_SIZE };  // get them from the level directly?
-        sf::Vector2f distanceVector = pacmanPos - observer->getPos();
-        float distance = distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
+        GhostState obsState = observer->getState();
 
-        if (observer->getState() == GhostState::Frightened && distance <= Config::ENTITY_SIZE / 2.0f) notifyObserver(observer, GhostState::Dead);
-        else if (observer->getState() == GhostState::Dead && observer->isNearHome()) notifyObserver(observer, GhostState::Scatter);
-        // CHECK IF GHOST IN SCATTER OR CHASE IS ON PACMAN --> KILL PACMAN
+        // Calculate distance to pacman
+        float distanceToPacman = distance(coordsToPosition(pacmanCoords), observer->getPos());
+
+        // Pacman ate this ghost
+        if (obsState == GhostState::Frightened && distanceToPacman <= Config::ENTITY_SIZE / 2.0f) notifyObserver(observer, GhostState::Dead);
+        // This ghost came back to life
+        else if (obsState == GhostState::Dead && observer->isNearHome()) notifyObserver(observer, GhostState::Scatter);
+        // This ghost ate pacman
+        else if ((obsState == GhostState::Chase || obsState == GhostState::Scatter) && distanceToPacman <= Config::ENTITY_SIZE / 2.0f)
+            over = true;  // LIFE COUNTER, RESTART, TIMERS, ETC ETC
     }
 }
 

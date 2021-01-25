@@ -1,6 +1,6 @@
 #include "Ghost.h"
 
-Ghost::Ghost(const char* spritesheet, const char* huntedSpritesheet, Level* lvl, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
+Ghost::Ghost(const char* spritesheet, const char* huntedSpritesheet, const Level* lvl, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
     : Entity(spritesheet, lvl, gridPos), scatterTarget(scatterPos), frightenedTarget(frightenedPos)
 {
     Ghost::huntedSpritesheet.loadFromFile(huntedSpritesheet); // Error handling!
@@ -70,11 +70,10 @@ void Ghost::changeDirection(const sf::Vector2i target)
     {
         if (dir != direction * -1 && !level->isWall(gridPosition + dir))
         {
-            sf::Vector2i distanceVector = target - (gridPosition + dir);
-            int distance = distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
-            if (distance < bestDist)
+            int dist = distance(target, gridPosition + dir);
+            if (dist < bestDist)
             {
-                bestDist = distance;
+                bestDist = dist;
                 bestDir = dir;
             }
         }
@@ -88,13 +87,10 @@ void Ghost::move()  // this needs SOME REFACTOR  -- also this movement is for on
     {
         sprite.move(direction.x * velocity, direction.y * velocity);
 
-        sf::Vector2i next = gridPosition + direction;  // some calcs happen more times than needed here
-        sf::Vector2f nodePos = { next.x * Config::ENTITY_SIZE, next.y * Config::ENTITY_SIZE };  // get them from the level directly?
-        sf::Vector2f distanceVector = nodePos - sprite.getPosition();   // DISTANCE GLOBAL FUNC!!
-        float distance = distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
-        if (distance <= Config::ENTITY_SIZE / 2.0f) // ??
+        sf::Vector2f nodePos = coordsToPosition(gridPosition + direction);
+        if (distance(nodePos, sprite.getPosition()) <= Config::ENTITY_SIZE / 2.0f) // ?? kinda arbitrary distance? in others as well
         {
-            gridPosition = next;   // ugh
+            gridPosition += direction;
             sprite.setPosition(nodePos);
             inBetween = false;
         }
@@ -103,20 +99,12 @@ void Ghost::move()  // this needs SOME REFACTOR  -- also this movement is for on
     {
         if (level->isIntersection(gridPosition))
         {
-            sf::Vector2i target;       // make it better a bit?
-            if (state == Chase)        target = level->getPacmanPosition();
-            else if (state == Scatter) target = scatterTarget;
-            else                       target = frightenedTarget;
-
 #ifdef CLASSIC
             changeDirection(target);
 #else
             aStar->getPath(path, gridPosition, target, direction);
             if (!path.empty() && path.size() > 2)
-            {
-                sf::Vector2i next = path.at(1)->gridPosition;
-                direction = next - gridPosition;
-            }
+                direction = path.at(1)->gridPosition - gridPosition;
             else if (state == Scatter || state == Frightened || state == Dead) changeDirection(target);
 #endif
             updateAnimation(direction);
@@ -125,17 +113,19 @@ void Ghost::move()  // this needs SOME REFACTOR  -- also this movement is for on
     }
 }
 
-void Ghost::updateState(GhostState gs) { state = gs; }
+void Ghost::updateState(GhostState gs) 
+{ 
+    state = gs;
+    if      (state == Chase)   target = level->getPacmanPosition();
+    else if (state == Scatter) target = scatterTarget;
+    else                       target = frightenedTarget;
+}
 
 GhostState Ghost::getState() { return state; }
 
 bool Ghost::isNearHome()
 {
-    sf::Vector2f homePos = { frightenedTarget.x * Config::ENTITY_SIZE, frightenedTarget.y * Config::ENTITY_SIZE };
-    sf::Vector2f distanceVector = homePos - sprite.getPosition();
-    float distance = distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
-
-    return distance <= Config::ENTITY_SIZE / 2.0f ? true : false;
+    return distance(coordsToPosition(frightenedTarget), sprite.getPosition()) <= Config::ENTITY_SIZE / 2.0f ? true : false;
 }
 
 sf::Vector2f Ghost::getPos() { return sprite.getPosition(); }
