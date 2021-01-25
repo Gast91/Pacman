@@ -27,7 +27,7 @@ private:
     bool checked = false;
     bool teleporter = false;
     bool gate = false;
-	sf::CircleShape dotSprite; // can get world position from here
+	sf::CircleShape dotSprite;
 public:
 	Tile();
     Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node* p = nullptr);
