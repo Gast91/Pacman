@@ -7,9 +7,20 @@ Level::Level()
 	background.scale(Config::SCALE, Config::SCALE);
 	if (bgTexture.loadFromFile(bgFile))
 		background.setTexture(bgTexture);
+
+    // if everything is okay here
+    scatterChaseTimer.startTimer();
 }
 
 Level::~Level() {}
+
+void Level::registerObserver(GhostObserver* observer) { observers.push_back(observer);}
+
+void Level::registerPacman(PacmanObserver * pacObs) { pacmanObserver = pacObs; }
+
+void Level::notifyObservers(GhostState gs) { for (auto& observer : observers) observer->updateState(gs); }
+
+void Level::notifyObserver(GhostObserver* observer, GhostState gs) { observer->updateState(gs); }
 
 bool Level::readLevel(std::string filePath)
 {
@@ -59,17 +70,57 @@ bool Level::isIntersection(sf::Vector2i coords) const
 
 bool Level::isTeleporter(sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->teleporter; }
 
-sf::Vector2i Level::getPacmanPosition() const { return pacmanPosition; }
+sf::Vector2i Level::getPacmanPosition() const { return pacmanCoords; }
 
-void Level::updatePacmanPosition(sf::Vector2i coords) { pacmanPosition = coords; }
+void Level::updatePacmanPosition(sf::Vector2i coords) { pacmanCoords = coords; }
 
-sf::Vector2i Level::teleport() 
-{ 
-    pacmanPosition.x = pacmanPosition.x == 0 ? Config::ROWS - 1 : 0; 
-    return pacmanPosition;
+bool Level::shouldScatter() // REVISE
+{
+    // 0-7 (SC) --> 7-27 (CH) --> 27-34 (SC) --> 34-54 (CH) --> 54-59 (SC) --> 59-79 (CH) --> 79-84 (SC) --> CHASE FOREVER*
+    double timeEllapsed = scatterChaseTimer.msEllapsed() / 1000.0;
+    if    ((timeEllapsed > 0  && timeEllapsed <= 7)
+        || (timeEllapsed > 27 && timeEllapsed <= 34)
+        || (timeEllapsed > 54 && timeEllapsed <= 59)
+        || (timeEllapsed > 79 && timeEllapsed <= 84)) return true;
+    else return false;
 }
 
-void Level::updateTiles(sf::Vector2i coords) { if (tileGrid[coords.x][coords.y]->hasADot()) tileGrid[coords.x][coords.y]->setEaten(); }
+void Level::update()
+{
+    // Update pacman's position on the grid
+    pacmanCoords = pacmanObserver->getGridPos();
+    // If pacman should teleport, notify and provide new grid position (currently only for X) - PACMAN POSITION CHANGES HERE!
+    if (tileGrid[pacmanCoords.x][pacmanCoords.y]->teleporter) pacmanObserver->teleport(pacmanCoords.x == 0 ? Config::ROWS - 1 : 0);
+    // If pacman ate a big dot, notify ghosts to run - PAUSE SCATTER (if relevant), START HUNTED TIMER??
+    if (tileGrid[pacmanCoords.x][pacmanCoords.y]->bigDot)
+    {
+        notifyObservers(GhostState::Frightened);
+        scatterChaseTimer.pauseTimer();
+        huntedTimer.startTimer();
+    }
+    // Update underline tile if pacman ate a dot
+    if (tileGrid[pacmanCoords.x][pacmanCoords.y]->hasADot()) tileGrid[pacmanCoords.x][pacmanCoords.y]->setEaten();
+
+    // Check if frightened timer expired, notify ghosts and resume scatter/chase timer
+    if (huntedTimer.isRunning() && huntedTimer.msEllapsed() / 1000.0 > 10.0)  // 10seconds duration?
+    {
+        huntedTimer.stopTimer();
+        scatterChaseTimer.resumeTimer();
+        notifyObservers(shouldScatter() ? GhostState::Scatter : GhostState::Chase); // Happens anyway???
+    }
+    else if (!huntedTimer.isRunning()) notifyObservers(shouldScatter() ? GhostState::Scatter : GhostState::Chase);
+
+    for (auto& observer : observers)  // IMPROVE - DISTANCE AS A GLOBAL FUNCTION FOR ONE
+    {
+        sf::Vector2f pacmanPos = { pacmanCoords.x * Config::ENTITY_SIZE, pacmanCoords.y * Config::ENTITY_SIZE };  // get them from the level directly?
+        sf::Vector2f distanceVector = pacmanPos - observer->getPos();
+        float distance = distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
+
+        if (observer->getState() == GhostState::Frightened && distance <= Config::ENTITY_SIZE / 2.0f) notifyObserver(observer, GhostState::Dead);
+        else if (observer->getState() == GhostState::Dead && observer->isNearHome()) notifyObserver(observer, GhostState::Scatter);
+        // CHECK IF GHOST IN SCATTER OR CHASE IS ON PACMAN --> KILL PACMAN
+    }
+}
 
 void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {

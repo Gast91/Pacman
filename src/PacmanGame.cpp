@@ -8,7 +8,10 @@ constexpr sf::Keyboard::Key LEFT        = sf::Keyboard::Key::A;
 constexpr sf::Keyboard::Key RIGHT       = sf::Keyboard::Key::D;
 constexpr sf::Keyboard::Key ESC         = sf::Keyboard::Key::Escape;
 
-constexpr const char* blinkySpriteSheet = "resources/sprites/blinky_spritesheet.png";   // Move to config??
+constexpr const char* blinkySpritesheet = "resources/sprites/blinky_spritesheet.png";   // Move to config??
+constexpr const char* pinkySpritesheet  = "resources/sprites/pinky_spritesheet.png";
+constexpr const char* inkySpritesheet   = "resources/sprites/inky_spritesheet.png";
+constexpr const char* clydeSpritesheet  = "resources/sprites/clyde_spritesheet.png";
 constexpr const char* huntedSpritesheet = "resources/sprites/ghost_spritesheet.png";
 
 int main()
@@ -17,13 +20,12 @@ int main()
 	window.setFramerateLimit(10); // less?
 
 	Level level;
-    Pacman pacman(&level, { 1, 1 });  // a design pattern for level and entities (observer?)
-    Ghost  blinky(blinkySpriteSheet, huntedSpritesheet, &level, { 26, 1 }, { 1, 1 }, { 11, 13 });
+    Pacman pacman(&level, { 1, 1 });
+    Ghost  blinky(blinkySpritesheet, huntedSpritesheet, &level, { 26, 1 }, { 1, 1 }, { 11, 13 });
+    //Ghost  pinky(pinkySpritesheet, huntedSpritesheet, &level, { 26, 1 }, {26, 1}, { 16, 13 });
 
-	// no blinky class but rather different pathfinding algorithms(personalities)
-    // ghost constructor takes starting position and pathfinding/personality algorithm
-    // Pinky(Pink) and Inky(Cyan) try to position themselves in front of Pac-Man, usually by cornering him, 
-    // and Clyde(Orange) will switch between chasing Pac-Man and fleeing from him.
+    level.registerPacman(&pacman);
+    level.registerObserver(&blinky);
 
 	while (window.isOpen())
 	{
@@ -53,9 +55,6 @@ int main()
 				case RIGHT:
 					pacman.changeDirection(EAST);
 					break;
-                case sf::Keyboard::Key::Space:
-                    blinky.debugTargeting();
-                    break;
 				}
 				break;
 			default:
@@ -64,6 +63,7 @@ int main()
 		}
 
         pacman.move();
+        level.update();
         blinky.move(); // needs some refactor preferably
 
         // move this into ghost move? available during debug? drawn along with blinky? or better in a debug object? ALSO ONLY WHEN ASTAR IS HAPPENING
