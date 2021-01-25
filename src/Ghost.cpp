@@ -40,9 +40,11 @@ void Ghost::updateAnimation(const sf::Vector2i direction)
     {
     case Chase:
     case Scatter:
+        sprite.setTexture(spriteSheet);
         Entity::updateAnimation(direction);
         break;
     case Frightened:
+        sprite.setTexture(huntedSpritesheet);
         sprite.setTextureRect(huntedAnim.frightened[huntedAnim.next()]);
         break;
     case Dead:  // Something to be done here?
@@ -80,7 +82,7 @@ void Ghost::changeDirection(const sf::Vector2i target)
     direction = bestDir;
 }
 
-void Ghost::move()  // this needs MAJOR REFACTOR  -- also this movement is for one type of ghost - use the pathfinding factory for the ghost personalities?
+void Ghost::move()  // this needs SOME REFACTOR  -- also this movement is for one type of ghost - use the pathfinding factory for the ghost personalities?
 {
     if (inBetween)
     {
@@ -88,7 +90,7 @@ void Ghost::move()  // this needs MAJOR REFACTOR  -- also this movement is for o
 
         sf::Vector2i next = gridPosition + direction;  // some calcs happen more times than needed here
         sf::Vector2f nodePos = { next.x * Config::ENTITY_SIZE, next.y * Config::ENTITY_SIZE };  // get them from the level directly?
-        sf::Vector2f distanceVector = nodePos - sprite.getPosition();
+        sf::Vector2f distanceVector = nodePos - sprite.getPosition();   // DISTANCE GLOBAL FUNC!!
         float distance = distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
         if (distance <= Config::ENTITY_SIZE / 2.0f) // ??
         {
@@ -102,9 +104,10 @@ void Ghost::move()  // this needs MAJOR REFACTOR  -- also this movement is for o
         if (level->isIntersection(gridPosition))
         {
             sf::Vector2i target;       // make it better a bit?
-            if      (state == Chase)   target = level->getPacmanPosition();
+            if (state == Chase)        target = level->getPacmanPosition();
             else if (state == Scatter) target = scatterTarget;
             else                       target = frightenedTarget;
+
 #ifdef CLASSIC
             changeDirection(target);
 #else
@@ -115,32 +118,24 @@ void Ghost::move()  // this needs MAJOR REFACTOR  -- also this movement is for o
                 direction = next - gridPosition;
             }
             else if (state == Scatter || state == Frightened || state == Dead) changeDirection(target);
-            //else I ATE PACKMAN?!
 #endif
             updateAnimation(direction);
         }
         inBetween = true;
     }
-
-	// check states
-	// move ghost accordingly
-	// update animations
 }
 
-void Ghost::debugTargeting()
+void Ghost::updateState(GhostState gs) { state = gs; }
+
+GhostState Ghost::getState() { return state; }
+
+bool Ghost::isNearHome()
 {
-    state = static_cast<GhostState>((state + 1) % 4);
-    switch (state)
-    {
-    case Chase:
-    case Scatter:
-        sprite.setTexture(spriteSheet);
-        break;
-    case Frightened:
-    case Dead:
-        sprite.setTexture(huntedSpritesheet);
-        break;
-    default:
-        break;
-    }
+    sf::Vector2f homePos = { frightenedTarget.x * Config::ENTITY_SIZE, frightenedTarget.y * Config::ENTITY_SIZE };
+    sf::Vector2f distanceVector = homePos - sprite.getPosition();
+    float distance = distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
+
+    return distance <= Config::ENTITY_SIZE / 2.0f ? true : false;
 }
+
+sf::Vector2f Ghost::getPos() { return sprite.getPosition(); }

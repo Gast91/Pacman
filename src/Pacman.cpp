@@ -3,15 +3,18 @@
 Pacman::Pacman(Level* lvl, sf::Vector2i gridPos) : Entity("resources/sprites/pacman_spritesheet.png", lvl, gridPos) {}
 Pacman::~Pacman() {}
 
+void Pacman::teleport(int newX)
+{
+    gridPosition.x = newX;
+    sprite.setPosition(gridPosition.x * Config::ENTITY_SIZE, gridPosition.y * Config::ENTITY_SIZE);
+}
+
+sf::Vector2i Pacman::getGridPos() { return gridPosition; }
+
 void Pacman::changeDirection(const sf::Vector2i nxtTurn) { nextTurn = nxtTurn; }
 
 void Pacman::move()
 {
-    if (level->isTeleporter(gridPosition))
-    {
-        gridPosition = level->teleport();
-        sprite.setPosition(gridPosition.x * Config::ENTITY_SIZE, gridPosition.y * Config::ENTITY_SIZE);
-    }
 	// Pacman can turn without hitting a wall or the ghost house gates, so change its direction
 	if (!level->isInaccessible(gridPosition + nextTurn)) { direction = nextTurn; }
 
@@ -23,8 +26,5 @@ void Pacman::move()
 
 	// Move Pacman and update its position on the level
 	sprite.move(direction.x * velocity, direction.y * velocity);
-	// Update level tiles (Pacman ate a dot)
-	level->updateTiles(gridPosition += direction);
-
-	level->updatePacmanPosition(gridPosition);  // only happens here? maybe merge it with updateTiles - call it update level?
+    gridPosition += direction;
 }
