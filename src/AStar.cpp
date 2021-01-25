@@ -1,8 +1,8 @@
 #include "AStar.h"
 
-AStar::AStar(Level* lvl) : level(lvl) {}
+AStar::AStar(const Level* lvl) : level(lvl) {}
 
-void AStar::GenerateChild(const std::unique_ptr<Node>& current, const sf::Vector2i& newLoc, std::vector<std::unique_ptr<Node>>& children)
+void AStar::generateChild(const std::unique_ptr<Node>& current, const sf::Vector2i& newLoc, std::vector<std::unique_ptr<Node>>& children)
 {
     sf::Vector2i newPos = current->gridPosition + newLoc;
     if (newPos.x < 0 || newPos.y < 0 || newPos.x > Config::ROWS - 1 || newPos.y > Config::COLS - 1) return;
@@ -47,7 +47,7 @@ void AStar::getPath(std::deque<std::unique_ptr<Node>>& path, const sf::Vector2i&
 
         // Generate children of the current node
         std::vector<std::unique_ptr<Node>> children;
-        for (const auto& dir : { NORTH, EAST, SOUTH, WEST }) GenerateChild(current, dir, children);
+        for (const auto& dir : { NORTH, EAST, SOUTH, WEST }) generateChild(current, dir, children);
 
         for (auto& child : children)
         {

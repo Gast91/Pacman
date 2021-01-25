@@ -7,17 +7,11 @@
 class AStar // generic pathfind class with an AStar function?
 {
 private:
-    Level* level;
+    const Level* level;
 
-	//Node nodeGrid[Config::ROWS][Config::COLS];
-	
-	//void generateChild(sf::Vector2i& currentPos, sf::Vector2i location, std::vector<Node>& children);
-
-    void GenerateChild(const std::unique_ptr<Node>& current, const sf::Vector2i& newLoc, std::vector<std::unique_ptr<Node>>& children);
-
-	//void resetGrid();
+    void generateChild(const std::unique_ptr<Node>& current, const sf::Vector2i& newLoc, std::vector<std::unique_ptr<Node>>& children);
 public:
-	AStar(Level* lvl);
+	AStar(const Level* lvl);
 
     void getPath(std::deque<std::unique_ptr<Node>>& path, const sf::Vector2i& startPos, const sf::Vector2i& endPos, const sf::Vector2i& currentDir);
 };
