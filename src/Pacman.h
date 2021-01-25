@@ -1,12 +1,12 @@
 #pragma once
 #include "Entity.h"
 
-class Pacman : public Entity, public PacmanObserver
+class Pacman : public Entity, public PacmanObserver  // transformable for getPosition?
 {
 private:
 	sf::Vector2i nextTurn = EAST;
 public:
-	Pacman(Level* lvl, sf::Vector2i gridPos);
+	Pacman(const Level* lvl, sf::Vector2i gridPos);
 	virtual ~Pacman();
 
     // PacmanObserver Interface Implementation

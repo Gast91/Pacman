@@ -1,6 +1,6 @@
 #include "Entity.h"
 
-Entity::Entity(const char* spriteSheet, Level* lvl, sf::Vector2i gridPos) : level(lvl), gridPosition(gridPos)
+Entity::Entity(const char* spriteSheet, const Level* lvl, sf::Vector2i gridPos) : level(lvl), gridPosition(gridPos)
 {
 	if (Entity::spriteSheet.loadFromFile(spriteSheet))
 		sprite.setTexture(Entity::spriteSheet);

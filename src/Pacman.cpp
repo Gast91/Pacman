@@ -1,6 +1,6 @@
 #include "Pacman.h"
 
-Pacman::Pacman(Level* lvl, sf::Vector2i gridPos) : Entity("resources/sprites/pacman_spritesheet.png", lvl, gridPos) {}
+Pacman::Pacman(const Level* lvl, sf::Vector2i gridPos) : Entity("resources/sprites/pacman_spritesheet.png", lvl, gridPos) {}
 Pacman::~Pacman() {}
 
 void Pacman::teleport(int newX)

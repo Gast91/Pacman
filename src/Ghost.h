@@ -16,12 +16,13 @@ struct HuntedAnimation
     unsigned int next() { return ++currentAnim %= 4; }
 };
 
-class Ghost : public Entity, public Observer
+class Ghost : public Entity, public GhostObserver  // transformable for getPosition?
 {
 protected:
 	AStar* aStar;    // not like this - remove - factory based on personality
     bool inBetween = false;
 
+    sf::Vector2i target;
     sf::Vector2i scatterTarget;
     sf::Vector2i frightenedTarget;   // CONSISTENT NAMES
     GhostState state = Scatter;
@@ -32,7 +33,7 @@ protected:
 	virtual void loadAnimations() override;
     virtual void updateAnimation(const sf::Vector2i direction) override;
 public:
-	Ghost(const char* spriteSheet, const char* huntedSpritesheet, Level* lvl, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos);
+	Ghost(const char* spriteSheet, const char* huntedSpritesheet, const Level* lvl, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos);
 	virtual ~Ghost();
 
 	virtual void move() override;

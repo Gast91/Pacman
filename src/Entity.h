@@ -13,7 +13,7 @@ struct Animation
 	unsigned int next() { return ++currentAnim %= 2; }
 };
 
-class Entity : public sf::Drawable
+class Entity : public sf::Drawable    // transformable for getPosition?
 {
 protected:
 	const int SIZE = 16; // size in config already but as a float - only used in loadAnimations and also dependant on the sprite SIZE
@@ -27,12 +27,12 @@ protected:
 	Animation movAnim;
 
 	sf::Vector2i gridPosition;
-	Level* level;
+	const Level* level;
 
 	virtual void loadAnimations();
     virtual void updateAnimation(const sf::Vector2i direction);
 public:
-	Entity(const char* spriteSheet, Level* lvl, sf::Vector2i gridPos);
+	Entity(const char* spriteSheet, const Level* lvl, sf::Vector2i gridPos);
 	virtual ~Entity();
 
 	virtual void move() = 0;
