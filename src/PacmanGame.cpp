@@ -1,18 +1,11 @@
 #include "Pacman.h"
 #include "Ghost.h"
 
-//Keybinds  - move to config  (inside another namespace?)
-constexpr sf::Keyboard::Key UP          = sf::Keyboard::Key::W;
-constexpr sf::Keyboard::Key DOWN        = sf::Keyboard::Key::S;
-constexpr sf::Keyboard::Key LEFT        = sf::Keyboard::Key::A;
-constexpr sf::Keyboard::Key RIGHT       = sf::Keyboard::Key::D;
-constexpr sf::Keyboard::Key ESC         = sf::Keyboard::Key::Escape;
-
-constexpr const char* blinkySpritesheet = "resources/sprites/blinky_spritesheet.png";   // Move to config??
+constexpr const char* blinkySpritesheet = "resources/sprites/blinky_spritesheet.png";   // Move each to the new derived class
 constexpr const char* pinkySpritesheet  = "resources/sprites/pinky_spritesheet.png";
 constexpr const char* inkySpritesheet   = "resources/sprites/inky_spritesheet.png";
 constexpr const char* clydeSpritesheet  = "resources/sprites/clyde_spritesheet.png";
-constexpr const char* huntedSpritesheet = "resources/sprites/ghost_spritesheet.png";
+constexpr const char* huntedSpritesheet = "resources/sprites/ghost_spritesheet.png";   // move to base class?
 
 int main()
 {
@@ -40,19 +33,19 @@ int main()
 			case sf::Event::KeyPressed:
 				switch (event.key.code)
 				{
-				case ESC:
+                case Config::Keybinds::ESC:
 					window.close();
 					break;
-				case UP:
+				case Config::Keybinds::UP:
 					pacman.changeDirection(NORTH);
 					break;
-				case DOWN:
+				case Config::Keybinds::DOWN:
 					pacman.changeDirection(SOUTH);
 					break;
-				case LEFT:	
+				case Config::Keybinds::LEFT:
 					pacman.changeDirection(WEST);
 					break;
-				case RIGHT:
+				case Config::Keybinds::RIGHT:
 					pacman.changeDirection(EAST);
 					break;
 				}
@@ -62,9 +55,12 @@ int main()
 			}
 		}
 
-        pacman.move();
-        level.update();
-        blinky.move(); // needs some refactor preferably
+        if (!level.gameOver())  // needs work
+        {
+            pacman.move();
+            level.update();
+            blinky.move(); // needs some refactor preferably
+        }
 
         // move this into ghost move? available during debug? drawn along with blinky? or better in a debug object? ALSO ONLY WHEN ASTAR IS HAPPENING
 #ifndef CLASSIC
