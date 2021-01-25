@@ -7,6 +7,13 @@
 
 enum GhostState { Chase, Scatter, Frightened, Dead };
 
+template <typename T>
+auto distance(const T target, const T origin)  // int if int, float if float, how???
+{
+    T distanceVector = target - origin;
+    return distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
+}
+
 namespace Config 
 {
   // Overall Scale of the game - Change ONLY this to adjust game size
@@ -25,15 +32,24 @@ namespace Config
 	const float B_DOT_SIZE  = 5.0f  * SCALE;
   //-----------------------------------------------------------------
 	const int ROWS = 28, COLS = 31;  // change to std::array?
+
+    namespace Keybinds
+    {
+        constexpr sf::Keyboard::Key UP = sf::Keyboard::Key::W;
+        constexpr sf::Keyboard::Key DOWN = sf::Keyboard::Key::S;
+        constexpr sf::Keyboard::Key LEFT = sf::Keyboard::Key::A;
+        constexpr sf::Keyboard::Key RIGHT = sf::Keyboard::Key::D;
+        constexpr sf::Keyboard::Key ESC = sf::Keyboard::Key::Escape;
+    }
 }
-// MAKE LEVEL CONST REFERENCE <-------------------
+inline sf::Vector2f coordsToPosition(sf::Vector2i coords) { return { coords.x * Config::ENTITY_SIZE, coords.y * Config::ENTITY_SIZE }; }
 
 // TODO:
 // 5. Get all the ghosts in the game:
 //       Implement personalities for the ghosts - REVISIT poly
 //-----------------------------------------------------------------------------------------------------------------------------
 // 6. Actual game logic:
-//       Pacman states (alive - dead)
+//       Pacman states (alive - dead) - SOMEWHAT DONE
 //       Win / Loss
 //       Multiple lives
 //-----------------------------------------------------------------------------------------------------------------------------
