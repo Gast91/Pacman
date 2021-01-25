@@ -40,7 +40,7 @@ public:
         running = true;
     }
 
-    double msEllapsed()  // if not initialized?
+    auto msEllapsed()  // if not initialized?
     {
         TimePoint currentTime = running ? std::chrono::steady_clock::now() : endTime;
         return std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
