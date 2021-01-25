@@ -18,12 +18,13 @@ private:
 	sf::Vector2i pacmanCoords;
     Timer scatterChaseTimer;
     Timer huntedTimer;
-private:
-	bool readLevel(std::string filePath);
 
-    std::vector<GhostObserver*> observers;
+    std::vector<GhostObserver*> observers;  // array!!
     PacmanObserver* pacmanObserver;
 
+    bool over = false;
+
+	bool readLevel(std::string filePath);
     bool shouldScatter();
 public:
 	Level();
@@ -37,10 +38,10 @@ public:
 	bool isWall(sf::Vector2i coords) const;
     bool isInaccessible(sf::Vector2i coords) const;
     bool isIntersection(sf::Vector2i coords) const;
-    bool isTeleporter(sf::Vector2i coords) const;
+
+    bool gameOver() const;
 
 	sf::Vector2i getPacmanPosition() const;
-	void updatePacmanPosition(sf::Vector2i coords);
 
     void update();
 
