@@ -1,9 +1,11 @@
 #pragma once
+#include <array>
 #include "Tile.h"
 #include "Timer.h"
 #include "IObserverSubject.h"
 
-using TileGrid = std::vector<std::vector<std::unique_ptr<Tile>>>;
+
+using TileGrid = std::array<std::array<std::unique_ptr<Tile>, Config::COLS>, Config::ROWS>;
 
 class Level : public sf::Drawable, public Subject
 {

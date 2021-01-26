@@ -15,7 +15,7 @@ Level::Level()
 Level::~Level() {}
 
 void Level::registerObserver(GhostObserver* observer) { observers.push_back(observer);}
-void Level::registerPacman(PacmanObserver * pacObs) { pacmanObserver = pacObs; }
+void Level::registerPacman(PacmanObserver* pacObs) { pacmanObserver = pacObs; }
 void Level::notifyObservers(GhostState gs) { for (auto& observer : observers) observer->updateState(gs); }
 void Level::notifyObserver(GhostObserver* observer, GhostState gs) { observer->updateState(gs); }
 
@@ -31,12 +31,10 @@ bool Level::readLevel(std::string filePath)
 	}
 
 	int token;
-    tileGrid.resize(Config::ROWS);
     for (int y = 0; y < Config::COLS; ++y)
     {
         for (int x = 0; x < Config::ROWS; ++x)
         {
-            tileGrid[x].resize(Config::COLS);
             if (!(infile >> token)) return false;
             tileGrid[x][y].reset(new Tile({ x, y }, { x * Config::ENTITY_SIZE + Config::SCALED_OFFSET, y * Config::ENTITY_SIZE + Config::SCALED_OFFSET }, token));
         }
