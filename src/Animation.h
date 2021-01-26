@@ -8,7 +8,7 @@ static const int SIZE = 16;
 template <unsigned int size>
 struct Animation
 {
-protected:
+private:
     unsigned int currentAnim = 0;
 public:
     virtual inline unsigned int next() { return ++currentAnim %= size; }
