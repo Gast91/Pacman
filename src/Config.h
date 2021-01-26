@@ -11,7 +11,7 @@ template <typename T>
 auto distance(const T target, const T origin)
 {
     T distanceVector = target - origin;
-    return distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
+    return sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
 }
 
 namespace Config 
@@ -40,6 +40,16 @@ namespace Config
         constexpr sf::Keyboard::Key LEFT = sf::Keyboard::Key::A;
         constexpr sf::Keyboard::Key RIGHT = sf::Keyboard::Key::D;
         constexpr sf::Keyboard::Key ESC = sf::Keyboard::Key::Escape;
+    }
+
+    namespace sprites
+    {
+        constexpr const char* pacman = "resources/sprites/pacman_spritesheet.png";
+        constexpr const char* blinky = "resources/sprites/blinky_spritesheet.png";
+        constexpr const char* pinky  = "resources/sprites/pinky_spritesheet.png";
+        constexpr const char* inky   = "resources/sprites/inky_spritesheet.png";
+        constexpr const char* clyde  = "resources/sprites/clyde_spritesheet.png";
+        constexpr const char* hunted = "resources/sprites/ghost_spritesheet.png";
     }
 }
 inline sf::Vector2f coordsToPosition(sf::Vector2i coords) { return { coords.x * Config::ENTITY_SIZE, coords.y * Config::ENTITY_SIZE }; }
