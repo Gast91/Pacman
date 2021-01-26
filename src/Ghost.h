@@ -18,7 +18,6 @@ protected:
 	sf::Texture huntedSpritesheet;  // SAME FOR ALL!!!!!! STATIC
     HuntedAnimation<4> huntedAnim;
 
-	virtual void loadAnimations() override;
     virtual void updateAnimation(const sf::Vector2i direction) override;
 public:
 	Ghost(const char* spriteSheet, const char* huntedSpritesheet, const Level* lvl, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos);

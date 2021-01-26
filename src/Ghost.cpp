@@ -5,8 +5,6 @@ Ghost::Ghost(const char* spritesheet, const char* huntedSpritesheet, const Level
 {
     Ghost::huntedSpritesheet.loadFromFile(huntedSpritesheet); // Error handling!
 
-    loadAnimations();
-
     velocity *= 0.5f;
 
 #ifndef CLASSIC
@@ -15,19 +13,6 @@ Ghost::Ghost(const char* spritesheet, const char* huntedSpritesheet, const Level
 }
 
 Ghost::~Ghost() { delete aStar; }  // nope
-
-void Ghost::loadAnimations()
-{
-    Entity::loadAnimations();
-    sprite.setTexture(huntedSpritesheet);
-
-    for (int i = 0; i < 4; ++i) 
-    {
-        huntedAnim.frightened[i] = { i * SIZE, 0   , SIZE, SIZE };
-        huntedAnim.deadMove[i]   = { i * SIZE, SIZE, SIZE, SIZE };
-    }
-    sprite.setTexture(spriteSheet);
-}
 
 void Ghost::updateAnimation(const sf::Vector2i direction)
 {
@@ -40,7 +25,7 @@ void Ghost::updateAnimation(const sf::Vector2i direction)
         break;
     case Frightened:
         sprite.setTexture(huntedSpritesheet);
-        sprite.setTextureRect(huntedAnim.frightened[huntedAnim.next()]);
+        sprite.setTextureRect(huntedAnim.nextFright());  // meh
         break;
     case Dead:
         sprite.setTextureRect(huntedAnim.next(direction));
