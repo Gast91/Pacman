@@ -8,7 +8,7 @@
 enum GhostState { Chase, Scatter, Frightened, Dead };
 
 template <typename T>
-auto distance(const T target, const T origin)  // int if int, float if float, how???
+auto distance(const T target, const T origin)
 {
     T distanceVector = target - origin;
     return distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
