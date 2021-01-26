@@ -4,18 +4,6 @@
 
 //#define CLASSIC
 
-struct HuntedAnimation
-{
-    sf::IntRect frightened[4];
-    sf::IntRect deadUp;
-    sf::IntRect deadLeft;
-    sf::IntRect deadRight;
-    sf::IntRect deadDown;
-    unsigned int currentAnim = 0;
-
-    unsigned int next() { return ++currentAnim %= 4; }
-};
-
 class Ghost : public Entity, public GhostObserver  // transformable for getPosition?
 {
 protected:
@@ -27,8 +15,8 @@ protected:
     sf::Vector2i frightenedTarget;   // CONSISTENT NAMES
     GhostState state = Scatter;
 
-	sf::Texture huntedSpritesheet;
-    HuntedAnimation huntedAnim;
+	sf::Texture huntedSpritesheet;  // SAME FOR ALL!!!!!! STATIC
+    HuntedAnimation<4> huntedAnim;
 
 	virtual void loadAnimations() override;
     virtual void updateAnimation(const sf::Vector2i direction) override;

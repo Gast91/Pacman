@@ -16,21 +16,16 @@ Ghost::Ghost(const char* spritesheet, const char* huntedSpritesheet, const Level
 
 Ghost::~Ghost() { delete aStar; }  // nope
 
-void Ghost::loadAnimations()  // can it be improved??
+void Ghost::loadAnimations()
 {
     Entity::loadAnimations();
     sprite.setTexture(huntedSpritesheet);
 
-    huntedAnim.frightened[0] = { 0   , 0   , SIZE, SIZE };
-    huntedAnim.frightened[1] = { SIZE, 0   , SIZE, SIZE };
-    huntedAnim.frightened[2] = { 0   , SIZE, SIZE, SIZE };
-    huntedAnim.frightened[3] = { SIZE, SIZE, SIZE, SIZE };
-
-    huntedAnim.deadRight = { 0   , 2 * SIZE, SIZE, SIZE };
-    huntedAnim.deadLeft  = { SIZE, 2 * SIZE, SIZE, SIZE };
-    huntedAnim.deadUp =    { 0   , 3 * SIZE, SIZE, SIZE };
-    huntedAnim.deadDown =  { SIZE, 3 * SIZE, SIZE, SIZE };
-
+    for (int i = 0; i < 4; ++i) 
+    {
+        huntedAnim.frightened[i] = { i * SIZE, 0   , SIZE, SIZE };
+        huntedAnim.deadMove[i]   = { i * SIZE, SIZE, SIZE, SIZE };
+    }
     sprite.setTexture(spriteSheet);
 }
 
@@ -47,15 +42,8 @@ void Ghost::updateAnimation(const sf::Vector2i direction)
         sprite.setTexture(huntedSpritesheet);
         sprite.setTextureRect(huntedAnim.frightened[huntedAnim.next()]);
         break;
-    case Dead:  // Something to be done here?
-        if (direction == NORTH)
-            sprite.setTextureRect(huntedAnim.deadUp);
-        else if (direction == SOUTH)
-            sprite.setTextureRect(huntedAnim.deadDown);
-        else if (direction == WEST)
-            sprite.setTextureRect(huntedAnim.deadLeft);
-        else if (direction == EAST)
-            sprite.setTextureRect(huntedAnim.deadRight);
+    case Dead:
+        sprite.setTextureRect(huntedAnim.next(direction));
     default:
         break;
     }

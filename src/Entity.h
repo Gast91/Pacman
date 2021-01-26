@@ -1,17 +1,6 @@
 #pragma once
 #include "Level.h"
-#include "Config.h"
-
-struct Animation
-{
-	sf::IntRect up[2];
-	sf::IntRect down[2];
-	sf::IntRect left[2];
-	sf::IntRect right[2];
-	unsigned int currentAnim = 0;
-
-	unsigned int next() { return ++currentAnim %= 2; }
-};
+#include "Animation.h"
 
 class Entity : public sf::Drawable    // transformable for getPosition?
 {
@@ -19,12 +8,12 @@ protected:
 	const int SIZE = 16; // size in config already but as a float - only used in loadAnimations and also dependant on the sprite SIZE
     float velocity = Config::ENTITY_SIZE;
 
-    sf::Vector2i direction;// = EAST;
+    sf::Vector2i direction;
 
 	sf::Texture spriteSheet;
 	sf::Sprite sprite;
 
-	Animation movAnim;
+    MovementAnimation<2> movAnim;
 
 	sf::Vector2i gridPosition;
 	const Level* level;
