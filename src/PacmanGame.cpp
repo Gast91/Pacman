@@ -1,11 +1,5 @@
 #include "Pacman.h"
-#include "Ghost.h"
-
-constexpr const char* blinkySpritesheet = "resources/sprites/blinky_spritesheet.png";   // Move each to the new derived class
-constexpr const char* pinkySpritesheet  = "resources/sprites/pinky_spritesheet.png";
-constexpr const char* inkySpritesheet   = "resources/sprites/inky_spritesheet.png";
-constexpr const char* clydeSpritesheet  = "resources/sprites/clyde_spritesheet.png";
-constexpr const char* huntedSpritesheet = "resources/sprites/ghost_spritesheet.png";   // move to base class?
+#include "GhostPersonas.h"
 
 int main()
 {
@@ -14,11 +8,16 @@ int main()
 
 	Level level;
     Pacman pacman(&level, { 1, 1 });
-    Ghost  blinky(blinkySpritesheet, huntedSpritesheet, &level, { 26, 1 }, { 1, 1 }, { 11, 13 });
-    //Ghost  pinky(pinkySpritesheet, huntedSpritesheet, &level, { 26, 1 }, {26, 1}, { 16, 13 });
+    //Ghost  blinky(&level, { 26, 1 }, { 1, 1 }, { 11, 13 });     // start pos for most is home/frightened right?
+    Clyde  clyde(&level, { 26, 1 }, { 26, 29 }, { 16, 15 });
+    //Pinky   pinky(&level, { 26, 1 }, { 26, 1 }, { 16, 13 });
 
-    level.registerPacman(&pacman);
-    level.registerObserver(&blinky);
+    level.registerPacman(&pacman);                                // POLY FOR ALL REGISTERS,MOVEMENTS, DRAWS!!
+    //level.registerObserver(&blinky);
+    //level.registerObserver(&pinky);
+    //level.registerObserver(&inky);
+    //inky.registerObserver(&blinky);   <----
+    level.registerObserver(&clyde);
 
 	while (window.isOpen())
 	{
@@ -59,27 +58,21 @@ int main()
         {
             pacman.move();
             level.update();
-            blinky.move(); // needs some refactor preferably
+            //blinky.move();
+            //pinky.move();
+            //inky.move();
+            clyde.move();
         }
-
-        // move this into ghost move? available during debug? drawn along with blinky? or better in a debug object? ALSO ONLY WHEN ASTAR IS HAPPENING
-#ifndef CLASSIC
-		sf::VertexArray lines(sf::LineStrip, blinky.path.size()); 
-		for (int i = 0; i < blinky.path.size(); i++)
-		{
-			// make it a utility function?
-			lines[i].position = sf::Vector2f(blinky.path[i]->gridPosition.x * Config::ENTITY_SIZE + Config::SCALED_OFFSET, 
-                                             blinky.path[i]->gridPosition.y * Config::ENTITY_SIZE + Config::SCALED_OFFSET);
-			lines[i].color = sf::Color::Red;
-		}
-#endif // !CLASSIC
 
 		window.clear();
 		window.draw(level);
 		window.draw(pacman);
-		window.draw(blinky);
+		//window.draw(blinky);
+        //window.draw(pinky);
+        //window.draw(inky);
+        window.draw(clyde);
 #ifndef CLASSIC
-        window.draw(lines); // experimental debug pathfind lines
+        window.draw(clyde.debugLines()); // experimental debug pathfind lines
 #endif // !CLASSIC
 		window.display();
 	}
