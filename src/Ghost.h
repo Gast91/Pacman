@@ -18,20 +18,23 @@ protected:
 	sf::Texture huntedSpritesheet;  // SAME FOR ALL!!!!!! STATIC
     HuntedAnimation<4> huntedAnim;
 
+    std::deque<std::unique_ptr<Node>> path;
+
     virtual void updateAnimation(const sf::Vector2i direction) override;
 public:
-	Ghost(const char* spriteSheet, const char* huntedSpritesheet, const Level* lvl, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos);
+	Ghost(const char* spriteSheet, const Level* lvl, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos);
 	virtual ~Ghost();
 
 	virtual void move() override;
     virtual void changeDirection(const sf::Vector2i target) override;
 
     virtual void updateState(GhostState gs) override;
+    virtual void updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement) override;
     virtual GhostState getState() override;
     virtual bool isNearHome() override;
-    virtual sf::Vector2f getPos() override;
+    virtual sf::Vector2i getCoords() override;
 
-    std::deque<std::unique_ptr<Node>> path;
+    sf::VertexArray debugLines();
 };
 
 // some ghosts stay in the house until a number of dots have been eaten

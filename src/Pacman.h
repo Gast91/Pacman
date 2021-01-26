@@ -11,7 +11,7 @@ public:
 
     // PacmanObserver Interface Implementation
     virtual void teleport(int newX) override;
-    virtual sf::Vector2i getGridPos() override;
+    virtual std::pair<sf::Vector2i, sf::Vector2i> getMovement() override;
 
     //Entity Interface Implementation
 	virtual void changeDirection(const sf::Vector2i nxtTurn) override;
