@@ -14,10 +14,8 @@ Level::Level()
 
 Level::~Level() {}
 
-void Level::registerObserver(GhostObserver* observer) { observers.push_back(observer);}
 void Level::registerPacman(PacmanObserver* pacObs) { pacmanObserver = pacObs; }
 void Level::notifyObservers(GhostState gs) { for (auto& observer : observers) observer->updateState(gs); }
-void Level::notifyObserver(GhostObserver* observer, GhostState gs) { observer->updateState(gs); }
 
 bool Level::readLevel(std::string filePath)
 {
@@ -65,7 +63,7 @@ bool Level::isIntersection(sf::Vector2i coords) const
 
 bool Level::gameOver() const { return over; }
 
-sf::Vector2i Level::getPacmanPosition() const { return pacmanCoords; }
+//sf::Vector2i Level::getPacmanPosition() const { return pacmanObserver->getGridPos(); }
 
 bool Level::shouldScatter()
 {
@@ -81,7 +79,8 @@ bool Level::shouldScatter()
 void Level::update()
 {
     // Update pacman's position on the grid
-    pacmanCoords = pacmanObserver->getGridPos();
+    //sf::Vector2i pacmanCoords = pacmanObserver->getGridPos();
+    const auto& pacmanCoords = pacmanObserver->getMovement().first;
     // If pacman should teleport, notify and provide new grid position (currently only for X)
     if (tileGrid[pacmanCoords.x][pacmanCoords.y]->teleporter) pacmanObserver->teleport(pacmanCoords.x == 0 ? Config::ROWS - 1 : 0);
     // If pacman ate a big dot, notify ghosts to run
@@ -91,7 +90,7 @@ void Level::update()
         scatterChaseTimer.pauseTimer();
         huntedTimer.startTimer();
     }
-    // Update underline tile if pacman ate a dot
+    // Update underlying tile if pacman ate a dot
     if (tileGrid[pacmanCoords.x][pacmanCoords.y]->hasADot()) tileGrid[pacmanCoords.x][pacmanCoords.y]->setEaten();
 
     // Check if frightened timer expired, notify ghosts and resume scatter/chase timer
@@ -109,15 +108,17 @@ void Level::update()
         GhostState obsState = observer->getState();
 
         // Calculate distance to pacman
-        float distanceToPacman = distance(coordsToPosition(pacmanCoords), observer->getPos());
+        float distanceToPacman = distance(coordsToPosition(pacmanCoords), coordsToPosition(observer->getCoords()));
 
         // Pacman ate this ghost
-        if (obsState == GhostState::Frightened && distanceToPacman <= Config::ENTITY_SIZE / 2.0f) notifyObserver(observer, GhostState::Dead);
+        if (obsState == GhostState::Frightened && distanceToPacman <= Config::ENTITY_SIZE / 2.0f) observer->updateState(GhostState::Dead);
         // This ghost came back to life
-        else if (obsState == GhostState::Dead && observer->isNearHome()) notifyObserver(observer, GhostState::Scatter);
+        else if (obsState == GhostState::Dead && observer->isNearHome()) observer->updateState(GhostState::Scatter);
         // This ghost ate pacman
         else if ((obsState == GhostState::Chase || obsState == GhostState::Scatter) && distanceToPacman <= Config::ENTITY_SIZE / 2.0f)
             over = true;  // LIFE COUNTER, RESTART, TIMERS, ETC ETC
+
+        observer->updateTarget(pacmanObserver->getMovement());
     }
 }
 
