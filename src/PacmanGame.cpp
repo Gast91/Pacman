@@ -6,18 +6,20 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(Config::WIDTH, Config::HEIGHT), "Pacman", sf::Style::Close);  // DECIDE NUMBERS! JUST INTS?
 	window.setFramerateLimit(10); // less?
 
-	Level level;
-    Pacman pacman(&level, { 1, 1 });
-    //Ghost  blinky(&level, { 26, 1 }, { 1, 1 }, { 11, 13 });     // start pos for most is home/frightened right?
-    Clyde  clyde(&level, { 26, 1 }, { 26, 29 }, { 16, 15 });
-    //Pinky   pinky(&level, { 26, 1 }, { 26, 1 }, { 16, 13 });
+    // Instantiate level, pacman and all the ghosts
+    std::unique_ptr<Level> level = std::make_unique<Level>();
+    std::unique_ptr<Pacman> pacman = std::unique_ptr<Pacman>(new Pacman(level.get(), { 13, 17 }));
+    std::array<std::unique_ptr<Ghost>, 4> ghosts = {        // start pos for most is home/frightened right?
+        std::unique_ptr<Ghost>(new Ghost(Config::sprites::blinky, level.get(), { 1, 1 }, { 1, 1 }, { 11, 13 })),
+        std::unique_ptr<Ghost>(new Pinky(level.get(), { 26, 1 }, { 26, 1 }, { 16, 13 })),
+        std::unique_ptr<Ghost>(new Inky(level.get(), { 1, 29 }, { 1, 29 }, { 11, 15 })),
+        std::unique_ptr<Ghost>(new Clyde(level.get(), { 26, 29 }, { 26, 29 }, { 16, 15 })),
+    };
 
-    level.registerPacman(&pacman);                                // POLY FOR ALL REGISTERS,MOVEMENTS, DRAWS!!
-    //level.registerObserver(&blinky);
-    //level.registerObserver(&pinky);
-    //level.registerObserver(&inky);
-    //inky.registerObserver(&blinky);   <----
-    level.registerObserver(&clyde);
+    // Register level observers (Inky also observes Blinky since its movement depends on it)
+    level->registerPacman(pacman.get());
+    for (auto& ghost : ghosts) level->registerObserver(ghost.get());
+    ghosts[2]->registerObserver(ghosts[0].get());                       // <---- kinda meh
 
 	while (window.isOpen())
 	{
@@ -36,16 +38,16 @@ int main()
 					window.close();
 					break;
 				case Config::Keybinds::UP:
-					pacman.changeDirection(NORTH);
+					pacman->changeDirection(NORTH);
 					break;
 				case Config::Keybinds::DOWN:
-					pacman.changeDirection(SOUTH);
+					pacman->changeDirection(SOUTH);
 					break;
 				case Config::Keybinds::LEFT:
-					pacman.changeDirection(WEST);
+					pacman->changeDirection(WEST);
 					break;
 				case Config::Keybinds::RIGHT:
-					pacman.changeDirection(EAST);
+					pacman->changeDirection(EAST);
 					break;
 				}
 				break;
@@ -54,27 +56,23 @@ int main()
 			}
 		}
 
-        if (!level.gameOver())  // needs work
+        if (!level->gameOver())  // needs work
         {
-            pacman.move();
-            level.update();
-            //blinky.move();
-            //pinky.move();
-            //inky.move();
-            clyde.move();
+            pacman->move();
+            level->update();
+            for (auto& ghost : ghosts) ghost->move();
         }
 
 		window.clear();
-		window.draw(level);
-		window.draw(pacman);
-		//window.draw(blinky);
-        //window.draw(pinky);
-        //window.draw(inky);
-        window.draw(clyde);
+		window.draw(*level);
+		window.draw(*pacman);
+        for (auto& ghost : ghosts) window.draw(*ghost);
+        // Display debug pathfinding lines
 #ifndef CLASSIC
-        window.draw(clyde.debugLines()); // experimental debug pathfind lines
+        for (auto& ghost : ghosts) window.draw(ghost->debugLines());
 #endif // !CLASSIC
 		window.display();
 	}
+    //_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF);
 	return 0;
 }
