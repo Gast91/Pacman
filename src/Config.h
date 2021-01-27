@@ -44,6 +44,7 @@ namespace Config
 
     namespace sprites
     {
+        constexpr const char* bckgnd = "resources/sprites/background.png";
         constexpr const char* pacman = "resources/sprites/pacman_spritesheet.png";
         constexpr const char* blinky = "resources/sprites/blinky_spritesheet.png";
         constexpr const char* pinky  = "resources/sprites/pinky_spritesheet.png";
@@ -56,7 +57,7 @@ inline sf::Vector2f coordsToPosition(sf::Vector2i coords) { return { coords.x * 
 
 // TODO:
 // 5. Get all the ghosts in the game:
-//       Implement personalities for the ghosts - REVISIT poly
+//       REVISIT poly
 //-----------------------------------------------------------------------------------------------------------------------------
 // 6. Actual game logic:
 //       Pacman states (alive - dead) - SOMEWHAT DONE

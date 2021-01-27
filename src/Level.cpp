@@ -5,14 +5,12 @@ Level::Level()
 {
 	readLevel("resources/grid.txt"); // this returns successful load or not - use it
 	background.scale(Config::SCALE, Config::SCALE);
-	if (bgTexture.loadFromFile(bgFile))
+	if (bgTexture.loadFromFile(Config::sprites::bckgnd))
 		background.setTexture(bgTexture);
 
     // if everything is okay here
     scatterChaseTimer.startTimer();
 }
-
-Level::~Level() {}
 
 void Level::registerPacman(PacmanObserver* pacObs) { pacmanObserver = pacObs; }
 void Level::notifyObservers(GhostState gs) { for (auto& observer : observers) observer->updateState(gs); }
@@ -62,8 +60,6 @@ bool Level::isIntersection(sf::Vector2i coords) const
 }
 
 bool Level::gameOver() const { return over; }
-
-//sf::Vector2i Level::getPacmanPosition() const { return pacmanObserver->getGridPos(); }
 
 bool Level::shouldScatter()
 {
@@ -118,6 +114,7 @@ void Level::update()
         else if ((obsState == GhostState::Chase || obsState == GhostState::Scatter) && distanceToPacman <= Config::ENTITY_SIZE / 2.0f)
             over = true;  // LIFE COUNTER, RESTART, TIMERS, ETC ETC
 
+        // Notify observers of pacman's new position/direction
         observer->updateTarget(pacmanObserver->getMovement());
     }
 }

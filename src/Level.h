@@ -10,8 +10,6 @@ using TileGrid = std::array<std::array<std::unique_ptr<Tile>, Config::COLS>, Con
 class Level : public sf::Drawable, public Subject
 {
 private:
-	const char* bgFile = "resources/sprites/background.png";
-
     TileGrid tileGrid;
 
 	sf::Texture bgTexture;
@@ -28,7 +26,6 @@ private:
     bool shouldScatter();
 public:
 	Level();
-	~Level();
 
     void registerPacman(PacmanObserver* pacObs);
     virtual void notifyObservers(GhostState gs) override;
