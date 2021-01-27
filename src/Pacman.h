@@ -1,7 +1,7 @@
 #pragma once
 #include "Entity.h"
 
-class Pacman : public Entity, public PacmanObserver  // transformable for getPosition?
+class Pacman : public Entity, public PacmanObserver
 {
 private:
 	sf::Vector2i nextTurn = EAST;

@@ -2,7 +2,7 @@
 #include "Level.h"
 #include "Animation.h"
 
-class Entity : public sf::Drawable    // transformable for getPosition?
+class Entity : public sf::Drawable//, public sf::Transformable    // does transformable work?
 {
 protected:
     float velocity = Config::ENTITY_SIZE;
