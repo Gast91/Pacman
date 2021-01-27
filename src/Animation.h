@@ -11,6 +11,7 @@ struct Animation
 private:
     unsigned int currentAnim = 0;
 public:
+    virtual ~Animation() {}
     virtual inline unsigned int next() { return ++currentAnim %= size; }
     virtual sf::IntRect& next(const sf::Vector2i direction) = 0;
 };
@@ -34,6 +35,7 @@ public:
             down[i]  = { i * SIZE,  3 * SIZE, SIZE, SIZE };
         }
     }
+    virtual ~MovementAnimation() {}
     virtual sf::IntRect& next(const sf::Vector2i direction) override
     {
         if      (direction == NORTH) return    up.at(Animation<size>::next());
@@ -58,6 +60,7 @@ public:
             deadMove[i]   = { i * SIZE, SIZE, SIZE, SIZE };
         }
     }
+    virtual ~HuntedAnimation() {}
     sf::IntRect& nextFright() { return frightened[Animation<size>::next()]; }
     virtual sf::IntRect& next(const sf::Vector2i direction) override
     {

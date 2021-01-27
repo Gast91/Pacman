@@ -6,7 +6,6 @@ class Pinky : public Ghost
 private:
     virtual void updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement) override
     {
-        // TARGET OUT OF BOUNDS??? It somehow loses direction! {0, 0} ->somewhere sf returns a zero vector
         if (state == Chase)
             target = { pacMovement.first.x + pacMovement.second.x * 4, pacMovement.first.y + pacMovement.second.y * 4 };
         else if (state == Scatter) target = scatterTarget;
@@ -18,11 +17,10 @@ public:
     virtual ~Pinky() {}
 };
 
-class Inky : public Ghost, public Subject
+class Inky : public Ghost    // TUNNEL SHENANIGANS (CANNOT REVERSE AND ITS PATHFINDING LEADS IT THERE EVENTUALLY)
 {
     virtual void updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement) override
     {
-        // TARGET OUT OF BOUNDS??? It somehow loses direction! {0, 0} ->somewhere sf returns a zero vector
         if (state == Chase)
         {
             const sf::Vector2i ahead = { pacMovement.first.x + pacMovement.second.x * 2, pacMovement.first.y + pacMovement.second.y * 2 };
@@ -32,11 +30,10 @@ class Inky : public Ghost, public Subject
         else if (state == Scatter) target = scatterTarget;
         else                       target = frightenedTarget;
     }
-    virtual void notifyObservers(GhostState gs) override {}
 public:
     Inky(const Level* lvl, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
         : Ghost(Config::sprites::inky, lvl, gridPos, scatterPos, frightenedPos) {}
-
+    virtual ~Inky() {}
 };
 
 class Clyde : public Ghost
@@ -51,4 +48,5 @@ class Clyde : public Ghost
 public:
     Clyde(const Level* lvl, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
         : Ghost(Config::sprites::clyde, lvl, gridPos, scatterPos, frightenedPos) {}
+    virtual ~Clyde() {}
 };
