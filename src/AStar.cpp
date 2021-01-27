@@ -30,7 +30,6 @@ void AStar::getPath(std::deque<std::unique_ptr<Node>>& path, const sf::Vector2i&
         if (current->gridPosition == goal->gridPosition)
         {
             std::unique_ptr<Node> next;
-            path.clear();
             while (current->parent)
             {
                 // parent of current node becomes next
@@ -100,4 +99,5 @@ void AStar::getPath(std::deque<std::unique_ptr<Node>>& path, const sf::Vector2i&
         std::sort(openList.begin(), openList.end(), [](const std::unique_ptr<Node>& a, const std::unique_ptr<Node>& b) { return a->f < b->f;});
         closedList.push_back(move(current));   // done with current, move to closedList
     }
+    // No path to target, classic mode will take care of pathfinding
 }

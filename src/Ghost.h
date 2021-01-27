@@ -4,7 +4,7 @@
 
 //#define CLASSIC
 
-class Ghost : public Entity, public GhostObserver  // transformable for getPosition?
+class Ghost : public Entity, public GhostObserver, public Subject
 {
 protected:
 	AStar* aStar;    // not like this - remove - factory based on personality
@@ -27,6 +27,8 @@ public:
 
 	virtual void move() override;
     virtual void changeDirection(const sf::Vector2i target) override;
+
+    virtual void notifyObservers(GhostState gs) override {}
 
     virtual void updateState(GhostState gs) override;
     virtual void updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement) override;

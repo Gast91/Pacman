@@ -41,7 +41,7 @@ void Ghost::changeDirection(const sf::Vector2i target)
 
     for (const auto& dir : { NORTH, WEST, SOUTH, EAST }) // HMMM what about east
     {
-        if (dir != direction * -1 && !level->isWall(gridPosition + dir))
+        if (dir != direction * -1 && !level->isWall(gridPosition + dir))  //reversing in the tunnel??
         {
             int dist = distance(target, gridPosition + dir);
             if (dist < bestDist)
@@ -75,6 +75,7 @@ void Ghost::move()
 #ifdef CLASSIC
             changeDirection(target);
 #else
+            path.clear();
             aStar->getPath(path, gridPosition, target, direction);
             if (!path.empty() && path.size() > 2)
                 direction = path.at(1)->gridPosition - gridPosition;
