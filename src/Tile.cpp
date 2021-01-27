@@ -1,6 +1,5 @@
 #include "Tile.h"
 
-Tile::Tile() {}
 Tile::Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node * p)
 {
     node.gridPosition = gridCoords;
@@ -31,17 +30,11 @@ Tile::Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node * p)
     }
 }
 
-Tile::~Tile() {}
-
 bool Tile::hasADot() const { return (dot || bigDot); }
 
-void Tile::setEaten()
-{
-	dot    = false;
-	bigDot = false;
-}
+void Tile::setEaten() { dot = false; bigDot = false; }
 
 void Tile::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-	if (dot || bigDot)	target.draw(dotSprite);
+	if (dot || bigDot) target.draw(dotSprite);
 }

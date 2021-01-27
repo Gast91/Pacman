@@ -11,8 +11,8 @@ struct Node
     Node* parent = nullptr;
 
     Node() {}
-    Node(sf::Vector2i pos, Node* p = nullptr) : gridPosition(pos), parent(p) {}
-    Node(Node* other) : gridPosition(other->gridPosition), parent(other->parent), f(other->f), g(other->g), h(other->h) {}
+    Node(const sf::Vector2i pos, Node* p = nullptr) : gridPosition(pos), parent(p) {}
+    Node(const Node* other) : gridPosition(other->gridPosition), parent(other->parent), f(other->f), g(other->g), h(other->h) {}
 
     inline bool operator== (const Node& rhs) { return gridPosition.x == rhs.gridPosition.x && gridPosition.y == rhs.gridPosition.y; }
 };
@@ -27,17 +27,15 @@ private:
     bool checked = false;
     bool teleporter = false;
     bool gate = false;
-	sf::CircleShape dotSprite;
-public:
-	Tile();
-    Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node* p = nullptr);
-	~Tile();
 
-    Node node;  // dont like it public
+	sf::CircleShape dotSprite;
+    Node node;
+public:
+    Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node* p = nullptr);
 
 	bool hasADot() const;
-
 	void setEaten();
+
 	void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 
     friend Level;
