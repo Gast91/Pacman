@@ -38,9 +38,9 @@ bool Level::readLevel(std::string filePath)
     return true;
 }
 
-bool Level::isWall(sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->wall; }
+bool Level::isWall(sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->type == TileType::Wall; }
 
-bool Level::isInaccessible(sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->wall || tileGrid[coords.x][coords.y]->gate; }
+bool Level::isInaccessible(sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->type == TileType::Wall || tileGrid[coords.x][coords.y]->type == TileType::Gate; }
 
 bool Level::isIntersection(sf::Vector2i coords) const
 {
@@ -75,19 +75,20 @@ bool Level::shouldScatter()
 void Level::update()
 {
     // Update pacman's position on the grid
-    //sf::Vector2i pacmanCoords = pacmanObserver->getGridPos();
     const auto pacmanCoords = pacmanObserver->getMovement().first;
     // If pacman should teleport, notify and provide new grid position (currently only for X)
-    if (tileGrid[pacmanCoords.x][pacmanCoords.y]->teleporter) pacmanObserver->teleport(pacmanCoords.x == 0 ? Config::ROWS - 1 : 0);
-    // If pacman ate a big dot, notify ghosts to run
-    if (tileGrid[pacmanCoords.x][pacmanCoords.y]->bigDot)
+    if (tileGrid[pacmanCoords.x][pacmanCoords.y]->type == TileType::Teleporter) pacmanObserver->teleport(pacmanCoords.x == 0 ? Config::ROWS - 1 : 0);
+    // Pacman's grid position contains a dot
+    if (tileGrid[pacmanCoords.x][pacmanCoords.y]->hasADot())
     {
-        notifyObservers(GhostState::Frightened);
-        scatterChaseTimer.pauseTimer();
-        huntedTimer.startTimer();
+        if (tileGrid[pacmanCoords.x][pacmanCoords.y]->type == TileType::BigDot)
+        {
+            notifyObservers(GhostState::Frightened);
+            scatterChaseTimer.pauseTimer();
+            huntedTimer.startTimer();
+        }
+        tileGrid[pacmanCoords.x][pacmanCoords.y]->setEaten();
     }
-    // Update underlying tile if pacman ate a dot
-    if (tileGrid[pacmanCoords.x][pacmanCoords.y]->hasADot()) tileGrid[pacmanCoords.x][pacmanCoords.y]->setEaten();
 
     // Check if frightened timer expired, notify ghosts and resume scatter/chase timer
     if (huntedTimer.isRunning() && huntedTimer.msEllapsed() / 1000.0 >= 10.0)  // 10seconds duration?

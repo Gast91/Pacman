@@ -1,5 +1,4 @@
 #pragma once
-#include "SFML/Graphics.hpp"
 #include "Config.h"
 
 class Level;
@@ -20,16 +19,14 @@ struct Node
 class Tile : public sf::Drawable
 {
 private:
-	bool wall   = false;
-	bool dot    = false;
-	bool bigDot = false;
+    const TileType type;
+
+    bool eaten = false;
     bool intersection = false;
     bool checked = false;
-    bool teleporter = false;
-    bool gate = false;
 
-	sf::CircleShape dotSprite;
     Node node;
+	sf::CircleShape dotSprite;
 public:
     Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node* p = nullptr);
 

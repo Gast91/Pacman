@@ -1,4 +1,5 @@
 #pragma once
+#include "SFML/Graphics.hpp"
 
 #define NORTH sf::Vector2i{ 0, -1}
 #define SOUTH sf::Vector2i{ 0,  1}
@@ -6,6 +7,7 @@
 #define EAST  sf::Vector2i{ 1,  0}
 
 enum class GhostState { Chase, Scatter, Frightened, Dead };
+enum class TileType   { Dot, Wall, BigDot, Gate = 7, None = 8, Teleporter = 9 };
 
 template <typename T>
 auto distance(const T target, const T origin)
