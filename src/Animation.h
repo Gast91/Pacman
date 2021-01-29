@@ -42,6 +42,7 @@ public:
         else if (direction == SOUTH) return  down.at(Animation<size>::next());
         else if (direction == WEST)  return  left.at(Animation<size>::next());
         else if (direction == EAST)  return right.at(Animation<size>::next());
+        throw std::exception("Unspecified Animation Direction");
     }
 };
 
@@ -68,6 +69,7 @@ public:
         else if (direction == SOUTH) return deadMove.at(1);
         else if (direction == WEST)  return deadMove.at(2);
         else if (direction == EAST)  return deadMove.at(3);
+        throw std::exception("Unspecified Animation Direction");
     }
 };
 
