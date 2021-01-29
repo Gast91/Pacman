@@ -5,7 +5,7 @@
 #define WEST  sf::Vector2i{-1,  0}
 #define EAST  sf::Vector2i{ 1,  0}
 
-enum GhostState { Chase, Scatter, Frightened, Dead };
+enum class GhostState { Chase, Scatter, Frightened, Dead };
 
 template <typename T>
 auto distance(const T target, const T origin)
@@ -56,11 +56,10 @@ namespace Config
 inline sf::Vector2f coordsToPosition(sf::Vector2i coords) { return { coords.x * Config::ENTITY_SIZE, coords.y * Config::ENTITY_SIZE }; }
 
 // TODO:
-// 5. Get all the ghosts in the game:
-//       REVISIT poly
 //-----------------------------------------------------------------------------------------------------------------------------
 // 6. Actual game logic:
 //       Pacman states (alive - dead) - SOMEWHAT DONE
+//       Inky getting in the tunnel..
 //       Win / Loss
 //       Multiple lives
 //-----------------------------------------------------------------------------------------------------------------------------

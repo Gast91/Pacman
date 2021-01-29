@@ -18,16 +18,16 @@ void Ghost::updateAnimation(const sf::Vector2i direction)
 {
     switch (state)
     {
-    case Chase:
-    case Scatter:
+    case GhostState::Chase:
+    case GhostState::Scatter:
         sprite.setTexture(spriteSheet);
         Entity::updateAnimation(direction);
         break;
-    case Frightened:
+    case GhostState::Frightened:
         sprite.setTexture(huntedSpritesheet);
         sprite.setTextureRect(huntedAnim.nextFright());  // meh
         break;
-    case Dead:
+    case GhostState::Dead:
         sprite.setTextureRect(huntedAnim.next(direction));
     default:
         break;
@@ -91,9 +91,9 @@ void Ghost::updateState(GhostState gs) { state = gs; }
 
 void Ghost::updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement)
 {
-    if      (state == Chase)   target = pacMovement.first;
-    else if (state == Scatter) target = scatterTarget;
-    else                       target = frightenedTarget;
+    if      (state == GhostState::Chase)   target = pacMovement.first;
+    else if (state == GhostState::Scatter) target = scatterTarget;
+    else                                   target = frightenedTarget;
 }
 
 GhostState Ghost::getState() { return state; }

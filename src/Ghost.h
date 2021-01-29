@@ -13,7 +13,7 @@ protected:
     sf::Vector2i target;
     sf::Vector2i scatterTarget;
     sf::Vector2i frightenedTarget;   // CONSISTENT NAMES
-    GhostState state = Scatter;
+    GhostState state = GhostState::Scatter;
 
 	sf::Texture huntedSpritesheet;  // SAME FOR ALL!!!!!! STATIC
     HuntedAnimation<4> huntedAnim;
