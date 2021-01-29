@@ -14,8 +14,8 @@ protected:
 
     MovementAnimation<2> movAnim;
 
-	sf::Vector2i gridPosition;
 	const Level* level;
+	sf::Vector2i gridPosition;
 
     virtual void updateAnimation(const sf::Vector2i direction);
 public:

@@ -76,7 +76,7 @@ void Level::update()
 {
     // Update pacman's position on the grid
     //sf::Vector2i pacmanCoords = pacmanObserver->getGridPos();
-    const auto& pacmanCoords = pacmanObserver->getMovement().first;
+    const auto pacmanCoords = pacmanObserver->getMovement().first;
     // If pacman should teleport, notify and provide new grid position (currently only for X)
     if (tileGrid[pacmanCoords.x][pacmanCoords.y]->teleporter) pacmanObserver->teleport(pacmanCoords.x == 0 ? Config::ROWS - 1 : 0);
     // If pacman ate a big dot, notify ghosts to run
