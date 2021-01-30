@@ -1,48 +1,45 @@
-#include <fstream>
+
 #include "Level.h"
 
-Level::Level()
-{
-	readLevel("resources/grid.txt"); // this returns successful load or not - use it
-	background.scale(Config::SCALE, Config::SCALE);
-	if (bgTexture.loadFromFile(Config::sprites::bckgnd))
-		background.setTexture(bgTexture);
+Level::Level() : 
+    tileGrid([]() {
+        std::ifstream infile;
+        infile.open(Config::grid);
 
-    // if everything is okay here
-    scatterChaseTimer.startTimer();
+        if (!infile) throw std::exception("Cannot find grid file");
+
+        TileGrid grid{};
+        int token;
+        for (int y = 0; y < Config::COLS; ++y)
+        {
+            for (int x = 0; x < Config::ROWS; ++x)
+            {
+                if (!(infile >> token)) throw std::exception("Unable to read grid file");
+                grid[x][y].reset(new Tile({ x, y }, { x * Config::ENTITY_SIZE + Config::SCALED_OFFSET, y * Config::ENTITY_SIZE + Config::SCALED_OFFSET }, token));
+            }
+        }
+        return grid; 
+    }()),
+    bgTexture(Util::loadTexture(Config::sprites::bckgnd)),
+    background([&]() {
+        std::unique_ptr<sf::Sprite> bgSprite;
+        bgSprite = std::make_unique<sf::Sprite>(*bgTexture);
+        bgSprite->scale(Config::SCALE, Config::SCALE);
+        return std::move(bgSprite); 
+    }()) 
+{ 
+    scatterChaseTimer.startTimer(); 
 }
 
 void Level::registerPacman(PacmanObserver* pacObs) { pacmanObserver = pacObs; }
-void Level::notifyObservers(GhostState gs) { for (auto& observer : observers) observer->updateState(gs); }
 
-bool Level::readLevel(std::string filePath)
-{
-	std::ifstream infile;
-	infile.open(filePath);
+void Level::notifyObservers(const GhostState gs) { for (auto& observer : observers) observer->updateState(gs); }
 
-	if (!infile)
-	{
-		// error message and abort everything also (also for other resources)
-		return false;
-	}
+bool Level::isWall(const sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->type == TileType::Wall; }
 
-	int token;
-    for (int y = 0; y < Config::COLS; ++y)
-    {
-        for (int x = 0; x < Config::ROWS; ++x)
-        {
-            if (!(infile >> token)) return false;
-            tileGrid[x][y].reset(new Tile({ x, y }, { x * Config::ENTITY_SIZE + Config::SCALED_OFFSET, y * Config::ENTITY_SIZE + Config::SCALED_OFFSET }, token));
-        }
-    }
-    return true;
-}
+bool Level::isInaccessible(const sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->type == TileType::Wall || tileGrid[coords.x][coords.y]->type == TileType::Gate; }
 
-bool Level::isWall(sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->type == TileType::Wall; }
-
-bool Level::isInaccessible(sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->type == TileType::Wall || tileGrid[coords.x][coords.y]->type == TileType::Gate; }
-
-bool Level::isIntersection(sf::Vector2i coords) const
+bool Level::isIntersection(const sf::Vector2i coords) const
 {
     if (!tileGrid[coords.x][coords.y]->checked)
     {
@@ -61,7 +58,7 @@ bool Level::isIntersection(sf::Vector2i coords) const
 
 bool Level::gameOver() const { return over; }
 
-bool Level::shouldScatter()
+bool Level::shouldScatter() const
 {
     // 0-7 (SC) --> 7-27 (CH) --> 27-34 (SC) --> 34-54 (CH) --> 54-59 (SC) --> 59-79 (CH) --> 79-84 (SC) --> CHASE FOREVER*
     double timeEllapsed = scatterChaseTimer.msEllapsed() / 1000.0;
@@ -105,12 +102,12 @@ void Level::update()
         GhostState obsState = observer->getState();
 
         // Calculate distance to pacman
-        float distanceToPacman = distance(coordsToPosition(pacmanCoords), coordsToPosition(observer->getCoords()));
+        float distanceToPacman = Util::distance(Util::coordsToPosition(pacmanCoords), Util::coordsToPosition(observer->getCoords()));
 
         // Pacman ate this ghost
         if (obsState == GhostState::Frightened && distanceToPacman <= Config::ENTITY_SIZE / 2.0f) observer->updateState(GhostState::Dead);
         // This ghost came back to life
-        else if (obsState == GhostState::Dead && observer->isNearHome()) observer->updateState(GhostState::Scatter);
+        else if (obsState == GhostState::Dead && observer->isNearHome()) observer->updateState(huntedTimer.isRunning() ? GhostState::Frightened : GhostState::Scatter);
         // This ghost ate pacman
         else if ((obsState == GhostState::Chase || obsState == GhostState::Scatter) && distanceToPacman <= Config::ENTITY_SIZE / 2.0f)
             over = true;  // LIFE COUNTER, RESTART, TIMERS, ETC ETC
@@ -122,7 +119,7 @@ void Level::update()
 
 void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-	target.draw(background);
+	target.draw(*background);
     for (auto& col : tileGrid)
     {
         for (auto& tile : col) target.draw(*tile);

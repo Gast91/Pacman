@@ -26,7 +26,7 @@ private:
     bool checked = false;
 
     Node node;
-	sf::CircleShape dotSprite;
+    const std::unique_ptr<sf::CircleShape> dotSprite;
 public:
     Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node* p = nullptr);
 

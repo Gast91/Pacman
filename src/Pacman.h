@@ -4,10 +4,11 @@
 class Pacman : public Entity, public PacmanObserver
 {
 private:
+	const Level* level;
 	sf::Vector2i nextTurn = EAST;
 public:
 	Pacman(const Level* lvl, sf::Vector2i gridPos);
-	virtual ~Pacman();
+	virtual ~Pacman() {};
 
     // PacmanObserver Interface Implementation
     virtual void teleport(int newX) override;

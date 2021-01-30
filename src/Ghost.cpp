@@ -1,18 +1,11 @@
 #include "Ghost.h"
 
-Ghost::Ghost(const char* spritesheet, const Level* lvl, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
-    : Entity(spritesheet, lvl, gridPos), scatterTarget(scatterPos), frightenedTarget(frightenedPos)
+Ghost::Ghost(const char* spritesheet, const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
+    : Entity(spritesheet, gridPos), aStar(astar), scatterTarget(scatterPos), frightenedTarget(frightenedPos), huntedSpritesheet(Util::loadTexture(Config::sprites::hunted))
 {
-    Ghost::huntedSpritesheet.loadFromFile(Config::sprites::hunted); // Error handling!
-
     velocity *= 0.5f;
-
-#ifndef CLASSIC
-	aStar = new AStar(lvl);    // MOVE OUTSIDE
-#endif // !CLASSIC
+    pathLines.setPrimitiveType(sf::LineStrip);
 }
-
-Ghost::~Ghost() { delete aStar; }  // nope
 
 void Ghost::updateAnimation(const sf::Vector2i direction)
 {
@@ -20,17 +13,17 @@ void Ghost::updateAnimation(const sf::Vector2i direction)
     {
     case GhostState::Chase:
     case GhostState::Scatter:
-        sprite.setTexture(spriteSheet);
+        sprite.setTexture(*spriteSheet);
         Entity::updateAnimation(direction);
         break;
     case GhostState::Frightened:
-        sprite.setTexture(huntedSpritesheet);
+        sprite.setTexture(*huntedSpritesheet);
         sprite.setTextureRect(huntedAnim.nextFright());  // meh
         break;
     case GhostState::Dead:
         sprite.setTextureRect(huntedAnim.next(direction));
-    default:
         break;
+    default: break;
     }
 }
 
@@ -41,9 +34,9 @@ void Ghost::changeDirection(const sf::Vector2i target)
 
     for (const auto& dir : { NORTH, WEST, SOUTH, EAST }) // HMMM what about east
     {
-        if (dir != direction * -1 && !level->isWall(gridPosition + dir))  //reversing in the tunnel??
+        if (dir != direction * -1 && !aStar->isWall(gridPosition + dir))  //reversing in the tunnel??
         {
-            int dist = distance(target, gridPosition + dir);
+            int dist = Util::distance(target, gridPosition + dir);
             if (dist < bestDist)
             {
                 bestDist = dist;
@@ -60,8 +53,8 @@ void Ghost::move()
     {
         sprite.move(direction.x * velocity, direction.y * velocity);
 
-        sf::Vector2f nodePos = coordsToPosition(gridPosition + direction);
-        if (distance(nodePos, sprite.getPosition()) <= Config::ENTITY_SIZE / 2.0f) // bit less? in others as well
+        sf::Vector2f nodePos = Util::coordsToPosition(gridPosition + direction);
+        if (Util::distance(nodePos, sprite.getPosition()) <= Config::ENTITY_SIZE / 2.0f) // bit less? in others as well
         {
             gridPosition += direction;
             sprite.setPosition(nodePos);
@@ -70,17 +63,14 @@ void Ghost::move()
     }
     else
     {
-        if (level->isIntersection(gridPosition))
+        if (aStar->isIntersection(gridPosition))
         {
-#ifdef CLASSIC
-            changeDirection(target);
-#else
             path.clear();
             aStar->getPath(path, gridPosition, target, direction);
             if (!path.empty() && path.size() > 2)
                 direction = path.at(1)->gridPosition - gridPosition;
             else changeDirection(target);
-#endif
+
             updateAnimation(direction);
         }
         inBetween = true;
@@ -100,19 +90,20 @@ GhostState Ghost::getState() { return state; }
 
 bool Ghost::isNearHome()
 {
-    return distance(coordsToPosition(frightenedTarget), sprite.getPosition()) <= Config::ENTITY_SIZE / 2.0f ? true : false;
+    return Util::distance(Util::coordsToPosition(frightenedTarget), sprite.getPosition()) <= Config::ENTITY_SIZE / 2.0f ? true : false;
 }
 
 sf::Vector2i Ghost::getCoords() { return gridPosition; }
 
-sf::VertexArray Ghost::debugLines()
+const sf::VertexArray& Ghost::debugLines(const sf::Color color)
 {
-    sf::VertexArray lines(sf::LineStrip, path.size());
-    for (int i = 0; i < path.size(); i++)
+    pathLines.clear();
+    pathLines.resize(path.size());
+    for (int i = 0; i < path.size(); ++i)
     {
-        lines[i].position = sf::Vector2f(path[i]->gridPosition.x * Config::ENTITY_SIZE + Config::SCALED_OFFSET,
-                                         path[i]->gridPosition.y * Config::ENTITY_SIZE + Config::SCALED_OFFSET);
-        lines[i].color = sf::Color::Red;
+        pathLines[i].position = sf::Vector2f(path[i]->gridPosition.x * Config::ENTITY_SIZE + Config::SCALED_OFFSET,
+                                             path[i]->gridPosition.y * Config::ENTITY_SIZE + Config::SCALED_OFFSET);
+        pathLines[i].color = color;
     }
-    return lines;
+    return pathLines;
 }

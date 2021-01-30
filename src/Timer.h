@@ -1,8 +1,8 @@
 #pragma once
-
 #include <chrono>
 
 using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
+
 class Timer
 {
 private:
@@ -40,7 +40,7 @@ public:
         running = true;
     }
 
-    auto msEllapsed()  // if not initialized?
+    auto msEllapsed() const // if not initialized?
     {
         TimePoint currentTime = running ? std::chrono::steady_clock::now() : endTime;
         return std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();

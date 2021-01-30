@@ -1,9 +1,10 @@
 #pragma once
 #include <array>
+#include <fstream>
+
 #include "Tile.h"
 #include "Timer.h"
 #include "IObserver.h"
-
 
 using TileGrid = std::array<std::array<std::unique_ptr<Tile>, Config::COLS>, Config::ROWS>;
 
@@ -12,8 +13,8 @@ class Level : public sf::Drawable, public Subject
 private:
     TileGrid tileGrid;
 
-	sf::Texture bgTexture;
-	sf::Sprite background;
+    const std::unique_ptr<sf::Texture> bgTexture;
+    const std::unique_ptr<sf::Sprite> background;
 
     Timer scatterChaseTimer;
     Timer huntedTimer;
@@ -22,17 +23,16 @@ private:
 
     bool over = false;
 
-	bool readLevel(std::string filePath);
-    bool shouldScatter();
+    bool shouldScatter() const;
 public:
 	Level();
 
     void registerPacman(PacmanObserver* pacObs);
-    virtual void notifyObservers(GhostState gs) override;
+    virtual void notifyObservers(const GhostState gs) override;
 
-	bool isWall(sf::Vector2i coords) const;
-    bool isInaccessible(sf::Vector2i coords) const;
-    bool isIntersection(sf::Vector2i coords) const;
+	bool isWall(const sf::Vector2i coords) const;
+    bool isInaccessible(const sf::Vector2i coords) const;
+    bool isIntersection(const sf::Vector2i coords) const;
 
     bool gameOver() const;
 

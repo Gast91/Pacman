@@ -2,7 +2,11 @@
 
 AStar::AStar(const Level* lvl) : level(lvl) {}
 
-void AStar::generateChild(const std::unique_ptr<Node>& current, const sf::Vector2i& newLoc, std::vector<std::unique_ptr<Node>>& children)
+bool AStar::isWall(const sf::Vector2i coords) const { return level->isWall(coords); }
+
+bool AStar::isIntersection(const sf::Vector2i coords) const { return level->isIntersection(coords); }
+
+void AStar::generateChild(const std::unique_ptr<Node>& current, const sf::Vector2i& newLoc, std::vector<std::unique_ptr<Node>>& children) const
 {
     sf::Vector2i newPos = current->gridPosition + newLoc;
     if (newPos.x < 0 || newPos.y < 0 || newPos.x > Config::ROWS - 1 || newPos.y > Config::COLS - 1) return;
@@ -10,7 +14,7 @@ void AStar::generateChild(const std::unique_ptr<Node>& current, const sf::Vector
     children.push_back(std::make_unique<Node>(new Node(newPos, current.get())));
 }
 
-void AStar::getPath(std::deque<std::unique_ptr<Node>>& path, const sf::Vector2i& startPos, const sf::Vector2i& endPos, const sf::Vector2i& currentDir)
+void AStar::getPath(std::deque<std::unique_ptr<Node>>& path, const sf::Vector2i& startPos, const sf::Vector2i& endPos, const sf::Vector2i& currentDir) const
 {
     std::deque<std::unique_ptr<Node>> openList;
     std::list<std::unique_ptr<Node>>  closedList;
