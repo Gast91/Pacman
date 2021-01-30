@@ -11,6 +11,7 @@ void Ghost::updateAnimation(const sf::Vector2i direction)
 {
     switch (state)
     {
+    case GhostState::Waiting:
     case GhostState::Chase:
     case GhostState::Scatter:
         sprite.setTexture(*spriteSheet);
@@ -49,6 +50,7 @@ void Ghost::changeDirection(const sf::Vector2i target)
 
 void Ghost::move()
 {
+    if (state == GhostState::Waiting) return;
     if (inBetween)
     {
         sprite.move(direction.x * velocity, direction.y * velocity);

@@ -6,7 +6,7 @@ const sf::Vector2i SOUTH{ 0,  1};
 const sf::Vector2i WEST {-1,  0};
 const sf::Vector2i EAST { 1,  0};
 
-enum class GhostState { Chase, Scatter, Frightened, Dead };
+enum class GhostState { Waiting, Chase, Scatter, Frightened, Dead };
 enum class TileType   { Dot, Wall, BigDot, Gate = 7, None = 8, Teleporter = 9 };
 
 namespace Config 
@@ -26,7 +26,7 @@ namespace Config
     constexpr float DOT_SIZE    = 2.5f  * SCALE;
     constexpr float B_DOT_SIZE  = 5.0f  * SCALE;
   //-----------------------------------------------------------------
-    constexpr const int ROWS = 28, COLS = 31;
+    constexpr int ROWS = 28, COLS = 31;
 
     constexpr const char* grid = "resources/grid.txt";
 
@@ -41,6 +41,8 @@ namespace Config
 
     namespace sprites
     {
+        // Individual Sprite Size
+        constexpr int size = 16;
         constexpr const char* bckgnd = "resources/sprites/background.png";
         constexpr const char* pacman = "resources/sprites/pacman_spritesheet.png";
         constexpr const char* blinky = "resources/sprites/blinky_spritesheet.png";
@@ -60,6 +62,12 @@ namespace Util
         throw std::exception("Cannot find texture");
     };
 
+    inline sf::Vector2i clampToGrid(const sf::Vector2i coords)
+    {
+        return { (coords.x < 1) ? 1 : (Config::ROWS - 1 < coords.x) ? Config::ROWS - 1 : coords.x,
+                 (coords.y < 1) ? 1 : (Config::COLS - 1 < coords.y) ? Config::COLS - 1 : coords.y };
+    }
+
     template <typename T>
     auto distance(const T target, const T origin)
     {
@@ -74,12 +82,12 @@ namespace Util
 //-----------------------------------------------------------------------------------------------------------------------------
 // 6. Actual game logic:
 //       Pacman states (alive - dead) - SOMEWHAT DONE
-//       Inky getting in the tunnel..
 //       distance detection issues...
 //       slow down pacman as well
-//       some ghosts stay in the house until a number of dots have been eaten
+//       ghosts CAN use tunnels, but at decreased speed..
 //       Win / Loss
 //       Multiple lives
+//       70 dots and then 170 --> fruit
 //-----------------------------------------------------------------------------------------------------------------------------
 // 7. Text - Media:
 //       Score counter (class like snake?)

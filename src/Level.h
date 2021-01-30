@@ -22,6 +22,7 @@ private:
     PacmanObserver* pacmanObserver;
 
     bool over = false;
+    int dotsEaten = 0;
 
     bool shouldScatter() const;
 public:
@@ -35,6 +36,7 @@ public:
     bool isIntersection(const sf::Vector2i coords) const;
 
     bool gameOver() const;
+    int  getEaten() const;
 
     void update();
 

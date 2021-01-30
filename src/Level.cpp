@@ -35,6 +35,8 @@ void Level::registerPacman(PacmanObserver* pacObs) { pacmanObserver = pacObs; }
 
 void Level::notifyObservers(const GhostState gs) { for (auto& observer : observers) observer->updateState(gs); }
 
+int Level::getEaten() const { return dotsEaten; }
+
 bool Level::isWall(const sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->type == TileType::Wall; }
 
 bool Level::isInaccessible(const sf::Vector2i coords) const { return tileGrid[coords.x][coords.y]->type == TileType::Wall || tileGrid[coords.x][coords.y]->type == TileType::Gate; }
@@ -85,6 +87,7 @@ void Level::update()
             huntedTimer.startTimer();
         }
         tileGrid[pacmanCoords.x][pacmanCoords.y]->setEaten();
+        ++dotsEaten;
     }
 
     // Check if frightened timer expired, notify ghosts and resume scatter/chase timer

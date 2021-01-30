@@ -21,7 +21,7 @@ protected:
 
     virtual void updateAnimation(const sf::Vector2i direction) override;
 public:
-	Ghost(const char* spriteSheet, const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos);
+    Ghost(const char* spriteSheet, const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos);
     virtual ~Ghost() {};
 
 	virtual void move() override;
@@ -29,7 +29,7 @@ public:
 
     virtual void notifyObservers(GhostState gs) override {}
 
-    virtual void updateState(GhostState gs) override;
+    virtual void updateState(GhostState gs);
     virtual void updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement) override;
     virtual GhostState getState() override;
     virtual bool isNearHome() override;
