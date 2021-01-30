@@ -2,67 +2,64 @@
 #include <array>
 #include "Config.h"
 
-// Individual Sprite Size
-static const int SIZE = 16; 
-
-template <unsigned int size>
+template <unsigned int animNo>
 struct Animation
 {
 private:
     unsigned int currentAnim = 0;
 public:
     virtual ~Animation() {}
-    virtual inline unsigned int next() { return ++currentAnim %= size; }
+    virtual inline unsigned int next() { return ++currentAnim %= animNo; }
     virtual sf::IntRect& next(const sf::Vector2i direction) = 0;
 };
 
-template <unsigned int size>
-struct MovementAnimation : public Animation<size>
+template <unsigned int animNo>
+struct MovementAnimation : public Animation<animNo>
 {
 private:
-    std::array<sf::IntRect, size> up;
-    std::array<sf::IntRect, size> down;
-    std::array<sf::IntRect, size> left;
-    std::array<sf::IntRect, size> right;
+    std::array<sf::IntRect, animNo> up;
+    std::array<sf::IntRect, animNo> down;
+    std::array<sf::IntRect, animNo> left;
+    std::array<sf::IntRect, animNo> right;
 public:
     MovementAnimation()
     {
-        for (int i = 0; i < size; ++i)
+        for (int i = 0; i < animNo; ++i)
         {
-            right[i] = { i * SIZE,  0,        SIZE, SIZE };
-            left[i]  = { i * SIZE,  SIZE,     SIZE, SIZE };
-            up[i]    = { i * SIZE,  2 * SIZE, SIZE, SIZE };
-            down[i]  = { i * SIZE,  3 * SIZE, SIZE, SIZE };
+            right[i] = { i * Config::sprites::size,  0                        , Config::sprites::size, Config::sprites::size };
+            left[i]  = { i * Config::sprites::size,      Config::sprites::size, Config::sprites::size, Config::sprites::size };
+            up[i]    = { i * Config::sprites::size,  2 * Config::sprites::size, Config::sprites::size, Config::sprites::size };
+            down[i]  = { i * Config::sprites::size,  3 * Config::sprites::size, Config::sprites::size, Config::sprites::size };
         }
     }
     virtual ~MovementAnimation() {}
     virtual sf::IntRect& next(const sf::Vector2i direction) override
     {
-        if      (direction == NORTH) return    up.at(Animation<size>::next());
-        else if (direction == SOUTH) return  down.at(Animation<size>::next());
-        else if (direction == WEST)  return  left.at(Animation<size>::next());
-        else if (direction == EAST)  return right.at(Animation<size>::next());
+        if      (direction == NORTH) return    up.at(Animation<animNo>::next());
+        else if (direction == SOUTH) return  down.at(Animation<animNo>::next());
+        else if (direction == WEST)  return  left.at(Animation<animNo>::next());
+        else if (direction == EAST)  return right.at(Animation<animNo>::next());
         throw std::exception("Unspecified Animation Direction");
     }
 };
 
-template <unsigned int size>
-struct HuntedAnimation : public Animation<size>
+template <unsigned int animNo>
+struct HuntedAnimation : public Animation<animNo>
 {
 private:
-    std::array<sf::IntRect, size> frightened;
-    std::array<sf::IntRect, size> deadMove;
+    std::array<sf::IntRect, animNo> frightened;
+    std::array<sf::IntRect, animNo> deadMove;
 public:
     HuntedAnimation()
     {
-        for (int i = 0; i < size; ++i)
+        for (int i = 0; i < animNo; ++i)
         {
-            frightened[i] = { i * SIZE, 0   , SIZE, SIZE };
-            deadMove[i]   = { i * SIZE, SIZE, SIZE, SIZE };
+            frightened[i] = { i * Config::sprites::size, 0                    , Config::sprites::size, Config::sprites::size };
+            deadMove[i]   = { i * Config::sprites::size, Config::sprites::size, Config::sprites::size, Config::sprites::size };
         }
     }
     virtual ~HuntedAnimation() {}
-    sf::IntRect& nextFright() { return frightened[Animation<size>::next()]; }
+    sf::IntRect& nextFright() { return frightened[Animation<animNo>::next()]; }
     virtual sf::IntRect& next(const sf::Vector2i direction) override
     {
         if      (direction == NORTH) return deadMove.at(0);
