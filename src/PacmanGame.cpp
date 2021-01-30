@@ -1,3 +1,4 @@
+#pragma once
 #include "Pacman.h"
 #include "GhostPersonas.h"
 
@@ -10,11 +11,11 @@ int main()
     std::unique_ptr<Level> level = std::make_unique<Level>();
 	AStar aStar{ level.get() };
     std::unique_ptr<Pacman> pacman = std::unique_ptr<Pacman>(new Pacman(level.get(), { 13, 17 }));
-    std::array<std::unique_ptr<Ghost>, 4> ghosts = {        // start pos for most is home/frightened right?
-        std::unique_ptr<Ghost>(new Ghost(Config::sprites::blinky, &aStar, { 1, 1 }, { 1, 1 }, { 11, 13 })),
-        std::unique_ptr<Ghost>(new Pinky(&aStar, { 26, 1  }, { 26, 1 }, { 16, 13 })),
-        std::unique_ptr<Ghost>(new Inky (&aStar, { 1,  29 }, { 1 , 29}, { 11, 15 })),
-        std::unique_ptr<Ghost>(new Clyde(&aStar, { 26, 29 }, { 26, 29}, { 16, 15 })),
+    std::array<std::unique_ptr<Ghost>, 4> ghosts = {        // get rid of frightened for most?
+        std::unique_ptr<Ghost>(new Ghost(Config::sprites::blinky, &aStar, { 13, 11 }, { 1, 1 }, { 11, 13 })),
+        std::unique_ptr<Ghost>(new Pinky(&aStar, { 16, 13 }, { 26, 1 }, { 16, 13 })),
+        std::unique_ptr<Ghost>(new Inky (&aStar, { 11, 15 }, { 7 , 29}, { 11, 15 })),
+        std::unique_ptr<Ghost>(new Clyde(&aStar, { 16, 15 }, { 20, 29}, { 16, 15 })),
     };
 
     // Register level observers (Inky also observes Blinky since its movement depends on it)
