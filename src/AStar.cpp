@@ -6,6 +6,8 @@ bool AStar::isWall(const sf::Vector2i coords) const { return level->isWall(coord
 
 bool AStar::isIntersection(const sf::Vector2i coords) const { return level->isIntersection(coords); }
 
+bool AStar::canExit(int eatLimit) const { return level->getEaten() >= eatLimit; }
+
 void AStar::generateChild(const std::unique_ptr<Node>& current, const sf::Vector2i& newLoc, std::vector<std::unique_ptr<Node>>& children) const
 {
     sf::Vector2i newPos = current->gridPosition + newLoc;
