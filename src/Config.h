@@ -1,39 +1,34 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 
-#define NORTH sf::Vector2i{ 0, -1}
-#define SOUTH sf::Vector2i{ 0,  1}
-#define WEST  sf::Vector2i{-1,  0}
-#define EAST  sf::Vector2i{ 1,  0}
+const sf::Vector2i NORTH{ 0, -1};
+const sf::Vector2i SOUTH{ 0,  1};
+const sf::Vector2i WEST {-1,  0};
+const sf::Vector2i EAST { 1,  0};
 
 enum class GhostState { Chase, Scatter, Frightened, Dead };
 enum class TileType   { Dot, Wall, BigDot, Gate = 7, None = 8, Teleporter = 9 };
 
-template <typename T>
-auto distance(const T target, const T origin)
-{
-    T distanceVector = target - origin;
-    return sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
-}
-
 namespace Config 
 {
   // Overall Scale of the game - Change ONLY this to adjust game size
-	const float SCALE = 1.5f;  // No limit atm or dynamic (cmd also?)
+    constexpr float SCALE = 1.5f;  // No limit atm or dynamic (cmd also?)
   //-----------------------------------------------------------------
   //--------------------GAME WINDOW SIZE-----------------------------
   //-----------------------------------------------------------------
-	const float WIDTH  = 448 * SCALE;
-	const float HEIGHT = 496 * SCALE;
+    constexpr float WIDTH  = 448 * SCALE;
+    constexpr float HEIGHT = 496 * SCALE;
   //-----------------------------------------------------------------
   //--------------------GAME ENTITIES SIZES--------------------------
   //-----------------------------------------------------------------
-	const float ENTITY_SIZE = 16.0f * SCALE;
-	const float SCALED_OFFSET = ENTITY_SIZE / ( 3 * SCALE );
-	const float DOT_SIZE    = 2.5f  * SCALE;
-	const float B_DOT_SIZE  = 5.0f  * SCALE;
+    constexpr float ENTITY_SIZE = 16.0f * SCALE;
+    constexpr float SCALED_OFFSET = ENTITY_SIZE / ( 3 * SCALE );
+    constexpr float DOT_SIZE    = 2.5f  * SCALE;
+    constexpr float B_DOT_SIZE  = 5.0f  * SCALE;
   //-----------------------------------------------------------------
-	const int ROWS = 28, COLS = 31;  // change to std::array?
+    constexpr const int ROWS = 28, COLS = 31;
+
+    constexpr const char* grid = "resources/grid.txt";
 
     namespace Keybinds
     {
@@ -55,13 +50,34 @@ namespace Config
         constexpr const char* hunted = "resources/sprites/ghost_spritesheet.png";
     }
 }
-inline sf::Vector2f coordsToPosition(sf::Vector2i coords) { return { coords.x * Config::ENTITY_SIZE, coords.y * Config::ENTITY_SIZE }; }
+
+namespace Util
+{
+    auto loadTexture = [](const char* path)
+    {
+        auto texture = std::make_unique<sf::Texture>();
+        if (texture->loadFromFile(path)) return std::move(texture);
+        throw std::exception("Cannot find texture");
+    };
+
+    template <typename T>
+    auto distance(const T target, const T origin)
+    {
+        T distanceVector = target - origin;
+        return sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
+    }
+
+    inline sf::Vector2f coordsToPosition(sf::Vector2i coords) { return { coords.x * Config::ENTITY_SIZE, coords.y * Config::ENTITY_SIZE }; }
+}
 
 // TODO:
 //-----------------------------------------------------------------------------------------------------------------------------
 // 6. Actual game logic:
 //       Pacman states (alive - dead) - SOMEWHAT DONE
 //       Inky getting in the tunnel..
+//       distance detection issues...
+//       slow down pacman as well
+//       some ghosts stay in the house until a number of dots have been eaten
 //       Win / Loss
 //       Multiple lives
 //-----------------------------------------------------------------------------------------------------------------------------
