@@ -9,10 +9,10 @@
 *.user
 *.userosscache
 *.sln.docstates
-*.sln
-*.vcxproj
-*.vcxproj.filters
-*.vcxproj.user
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -21,7 +21,7 @@
 mono_crash.*
 
 # SFML
-/dependencies
+vendor/SFML-*/
 
 # Build results
 [Dd]ebug/
