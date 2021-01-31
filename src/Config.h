@@ -43,13 +43,14 @@ namespace Config
     {
         // Individual Sprite Size
         constexpr int size = 16;
-        constexpr const char* bckgnd = "resources/sprites/background.png";
-        constexpr const char* pacman = "resources/sprites/pacman_spritesheet.png";
-        constexpr const char* blinky = "resources/sprites/blinky_spritesheet.png";
-        constexpr const char* pinky  = "resources/sprites/pinky_spritesheet.png";
-        constexpr const char* inky   = "resources/sprites/inky_spritesheet.png";
-        constexpr const char* clyde  = "resources/sprites/clyde_spritesheet.png";
-        constexpr const char* hunted = "resources/sprites/ghost_spritesheet.png";
+        constexpr const char* bckgnd   = "resources/sprites/background.png";
+        constexpr const char* pacman   = "resources/sprites/pacman_spritesheet.png";
+        constexpr const char* pacDeath = "resource/sprites/pacman_death_spritesheet.png";
+        constexpr const char* blinky   = "resources/sprites/blinky_spritesheet.png";
+        constexpr const char* pinky    = "resources/sprites/pinky_spritesheet.png";
+        constexpr const char* inky     = "resources/sprites/inky_spritesheet.png";
+        constexpr const char* clyde    = "resources/sprites/clyde_spritesheet.png";
+        constexpr const char* hunted   = "resources/sprites/ghost_spritesheet.png";
     }
 }
 
@@ -72,7 +73,7 @@ namespace Util
     auto distance(const T target, const T origin)
     {
         T distanceVector = target - origin;
-        return sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
+        return distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
     }
 
     inline sf::Vector2f coordsToPosition(sf::Vector2i coords) { return { coords.x * Config::ENTITY_SIZE, coords.y * Config::ENTITY_SIZE }; }
@@ -84,13 +85,17 @@ namespace Util
 //       Pacman states (alive - dead) - SOMEWHAT DONE
 //       distance detection issues...
 //       slow down pacman as well
-//       ghosts CAN use tunnels, but at decreased speed..
+//       ghosts get 'unloaded' when pacman dies and then animation is played (full circle to puff then restart)
+//       game 'pauses' for a sec when pacman eats a ghost and point text is shown (technically the dead ghost speed through to its home but whatevs)
+//       hunted anim 'flashes' only during the end of hunted period - otherwise it stays blue (do they swap back to hunting when they reach home or wait for hunted to end?)
+//       ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
+//       inky (and another) very rarely gets in the ghost house without being frightened
 //       Win / Loss
-//       Multiple lives
-//       70 dots and then 170 --> fruit
+//       Multiple lives - (3 left looking pacmans, bottom left) - at (re)start one gets removed - when ready!text is shown
+//       70 dots and then 170 --> fruit (time limit?)
 //-----------------------------------------------------------------------------------------------------------------------------
 // 7. Text - Media:
-//       Score counter (class like snake?)
+//       Score counter
 //       Lives counter
 //       Game sound
 //-----------------------------------------------------------------------------------------------------------------------------

@@ -3,18 +3,32 @@
 #include "Config.h"
 
 template <unsigned int animNo>
-struct Animation
+class Animation
 {
 private:
     unsigned int currentAnim = 0;
 public:
     virtual ~Animation() {}
-    virtual inline unsigned int next() { return ++currentAnim %= animNo; }
+    virtual inline unsigned int next() { return ++currentAnim %= animNo; }  // next & nextPos?
     virtual sf::IntRect& next(const sf::Vector2i direction) = 0;
 };
 
+//template<unsigned int animNo>
+//class DeathAnimation : public Animation<animNo>
+//{
+//private:
+//    std::array<sf::IntRect, animNo> death;
+//public:
+//    constexpr DeathAnimation()
+//    {
+//        for (int i = 0; i < animNo; ++i) death[i] = { i * Config::sprites::size, 0, Config::sprites::size, Config::sprites::size };
+//    }
+//    virtual ~DeathAnimation() {}
+//    virtual sf::IntRect& next(const sf::Vector2i direction) override {} //... must return val...
+//};
+
 template <unsigned int animNo>
-struct MovementAnimation : public Animation<animNo>
+class MovementAnimation : public Animation<animNo>
 {
 private:
     std::array<sf::IntRect, animNo> up;
@@ -22,7 +36,7 @@ private:
     std::array<sf::IntRect, animNo> left;
     std::array<sf::IntRect, animNo> right;
 public:
-    MovementAnimation()
+    constexpr MovementAnimation()
     {
         for (int i = 0; i < animNo; ++i)
         {
@@ -44,13 +58,13 @@ public:
 };
 
 template <unsigned int animNo>
-struct HuntedAnimation : public Animation<animNo>
+class HuntedAnimation : public Animation<animNo>
 {
 private:
     std::array<sf::IntRect, animNo> frightened;
     std::array<sf::IntRect, animNo> deadMove;
 public:
-    HuntedAnimation()
+    constexpr HuntedAnimation()
     {
         for (int i = 0; i < animNo; ++i)
         {
@@ -59,7 +73,7 @@ public:
         }
     }
     virtual ~HuntedAnimation() {}
-    sf::IntRect& nextFright() { return frightened[Animation<animNo>::next()]; }
+    constexpr sf::IntRect& nextFright() { return frightened[Animation<animNo>::next()]; }
     virtual sf::IntRect& next(const sf::Vector2i direction) override
     {
         if      (direction == NORTH) return deadMove.at(0);
@@ -70,5 +84,5 @@ public:
     }
 };
 
-// make the arrays constants
 // pacman's dead animation??
+// Move textures in here?
