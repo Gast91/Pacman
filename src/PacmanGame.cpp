@@ -9,7 +9,7 @@ int main()
 
     // Instantiate level, pacman and all the ghosts - HANDLE EXCEPTIONS!
     std::unique_ptr<Level> level = std::make_unique<Level>();
-	AStar aStar{ level.get() };
+	const AStar aStar{ level.get() };
     std::unique_ptr<Pacman> pacman = std::unique_ptr<Pacman>(new Pacman(level.get(), { 13, 17 }));
     std::array<std::unique_ptr<Ghost>, 4> ghosts = {        // get rid of frightened for most?
         std::unique_ptr<Ghost>(new Ghost(Config::sprites::blinky, &aStar, { 13, 11 }, { 1, 1 }, { 11, 13 })),
@@ -18,10 +18,11 @@ int main()
         std::unique_ptr<Ghost>(new Clyde(&aStar, { 16, 15 }, { 20, 29}, { 16, 15 })),
     };
 
-    // Register level observers (Inky also observes Blinky since its movement depends on it)
+    // Register ghosts as level observers
     level->registerPacman(pacman.get());
     for (const auto& ghost : ghosts) level->registerObserver(ghost.get());
-    ghosts[2]->registerObserver(ghosts[0].get());                       // <---- kinda meh
+	// Inky also observes Blinky since its movement depends on it
+    ghosts[2]->registerObserver(ghosts[0].get());
 
 	while (window.isOpen())
 	{

@@ -6,9 +6,9 @@ class GhostObserver
 public:
     virtual void updateState(GhostState gs) = 0;
     virtual void updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement) = 0;
-    virtual GhostState getState() = 0;
-    virtual bool isNearHome() = 0;
-    virtual sf::Vector2i getCoords() = 0;
+    virtual GhostState getState() const = 0;
+    virtual bool isNearHome() const = 0;
+    virtual sf::Vector2i getCoords() const = 0;
 
 };
 
@@ -16,7 +16,7 @@ class PacmanObserver
 {
 public:
     virtual void teleport(int newX) = 0;
-    virtual std::pair<sf::Vector2i, sf::Vector2i> getMovement() = 0;
+    virtual std::pair<sf::Vector2i, sf::Vector2i> getMovement() const = 0;
 };
 
 class Subject

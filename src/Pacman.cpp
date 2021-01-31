@@ -1,6 +1,7 @@
 #include "Pacman.h"
 
-Pacman::Pacman(const Level* lvl, sf::Vector2i gridPos) : Entity(Config::sprites::pacman, gridPos), level(lvl) {}
+Pacman::Pacman(const Level* lvl, sf::Vector2i gridPos) 
+	: Entity(Config::sprites::pacman, gridPos), level(lvl) /*,deathSpritesheet(Util::loadTexture(Config::sprites::pacDeath))*/ {}
 
 void Pacman::teleport(int newX)
 {
@@ -8,7 +9,7 @@ void Pacman::teleport(int newX)
     sprite.setPosition(gridPosition.x * Config::ENTITY_SIZE, gridPosition.y * Config::ENTITY_SIZE);
 }
 
-std::pair<sf::Vector2i, sf::Vector2i> Pacman::getMovement() { return std::make_pair(gridPosition, direction); }
+std::pair<sf::Vector2i, sf::Vector2i> Pacman::getMovement() const { return std::make_pair(gridPosition, direction); }
 
 void Pacman::changeDirection(const sf::Vector2i nxtTurn) { nextTurn = nxtTurn; }
 

@@ -12,7 +12,7 @@ private:
         else                                   target = frightenedTarget;
     }
 public:
-    Pinky(AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
+    Pinky(const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
         : Ghost(Config::sprites::pinky, astar, gridPos, scatterPos, frightenedPos) {}
     virtual ~Pinky() {}
 };
@@ -32,7 +32,7 @@ private:
         else                                   target = frightenedTarget;
     }
 public:
-    Inky(AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
+    Inky(const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
         : Ghost(Config::sprites::inky, astar, gridPos, scatterPos, frightenedPos) 
     { 
         state = GhostState::Waiting;
@@ -57,7 +57,7 @@ private:
         else                                   target = frightenedTarget;
     }
 public:
-    Clyde(AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
+    Clyde(const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
         : Ghost(Config::sprites::clyde, astar, gridPos, scatterPos, frightenedPos) 
     { 
         state = GhostState::Waiting; 

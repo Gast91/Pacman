@@ -35,7 +35,7 @@ void Ghost::changeDirection(const sf::Vector2i target)
 
     for (const auto& dir : { NORTH, WEST, SOUTH, EAST }) // HMMM what about east
     {
-        if (dir != direction * -1 && !aStar->isWall(gridPosition + dir))  //reversing in the tunnel??
+        if (dir != direction * -1 && !aStar->isWall(gridPosition + dir))
         {
             int dist = Util::distance(target, gridPosition + dir);
             if (dist < bestDist)
@@ -88,14 +88,14 @@ void Ghost::updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement)
     else                                   target = frightenedTarget;
 }
 
-GhostState Ghost::getState() { return state; }
+GhostState Ghost::getState() const { return state; }
 
-bool Ghost::isNearHome()
+bool Ghost::isNearHome() const
 {
     return Util::distance(Util::coordsToPosition(frightenedTarget), sprite.getPosition()) <= Config::ENTITY_SIZE / 2.0f ? true : false;
 }
 
-sf::Vector2i Ghost::getCoords() { return gridPosition; }
+sf::Vector2i Ghost::getCoords() const { return gridPosition; }
 
 const sf::VertexArray& Ghost::debugLines(const sf::Color color)
 {

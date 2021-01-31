@@ -31,9 +31,9 @@ public:
 
     virtual void updateState(GhostState gs);
     virtual void updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement) override;
-    virtual GhostState getState() override;
-    virtual bool isNearHome() override;
-    virtual sf::Vector2i getCoords() override;
+    virtual GhostState getState() const override;
+    virtual bool isNearHome() const override;
+    virtual sf::Vector2i getCoords() const override;
 
     const sf::VertexArray& debugLines(const sf::Color color);
 };
