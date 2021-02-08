@@ -72,12 +72,22 @@ struct EatenAnimation: public Animation<animNo>
 };
 
 template<unsigned int animNo>
-struct DeathAnimation : public Animation<animNo>
+class DeathAnimation : public Animation<animNo>
 {
+private:
+    unsigned int progress = 0;
+    bool done = false;
+public:
     DeathAnimation()
     {
         for (int i = 0; i < animNo; ++i)
             Animation<animNo>::anims[i] = { i * Config::sprites::size, 0, Config::sprites::size, Config::sprites::size };
     }
     virtual ~DeathAnimation() {}
+    virtual sf::IntRect& next(const sf::Vector2i direction = { 0, 0 }) override
+    {
+        if (++progress == animNo - 1) done = true;
+        return Animation<animNo>::next();
+    }
+    bool isDone() const { return done; }
 };

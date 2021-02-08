@@ -10,7 +10,7 @@ public:
     virtual GhostState getState() const = 0;
     virtual bool isNearHome() const = 0;
     virtual sf::Vector2i getCoords() const = 0;
-
+    virtual sf::FloatRect getGlobalBounds() const = 0;
 };
 
 class PacmanObserver
@@ -19,6 +19,7 @@ public:
     virtual ~PacmanObserver() = default;
     virtual void teleport(int newX) = 0;
     virtual std::pair<sf::Vector2i, sf::Vector2i> getMovement() const = 0;
+    virtual sf::FloatRect getGlobalBounds() const = 0;
 };
 
 class Subject

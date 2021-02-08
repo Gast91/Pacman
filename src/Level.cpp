@@ -103,15 +103,15 @@ void Level::update()
     {
         GhostState obsState = observer->getState();
 
-        // Calculate distance to pacman
-        float distanceToPacman = Util::distance(Util::coordsToPosition(pacmanCoords), Util::coordsToPosition(observer->getCoords()));
+        // Is there a collision with pacman?
+        bool colliding = observer->getGlobalBounds().intersects(pacmanObserver->getGlobalBounds());
 
         // Pacman ate this ghost
-        if (obsState == GhostState::Frightened && distanceToPacman <= Config::ENTITY_SIZE / 2.0f) observer->updateState(GhostState::Dead);
+        if (obsState == GhostState::Frightened && colliding) observer->updateState(GhostState::Dead);
         // This ghost came back to life
         else if (obsState == GhostState::Dead && observer->isNearHome()) observer->updateState(huntedTimer.isRunning() ? GhostState::Frightened : GhostState::Scatter);
         // This ghost ate pacman
-        else if ((obsState == GhostState::Chase || obsState == GhostState::Scatter) && distanceToPacman <= Config::ENTITY_SIZE / 2.0f)
+        else if ((obsState == GhostState::Chase || obsState == GhostState::Scatter) && colliding)
             over = true;  // LIFE COUNTER, RESTART, TIMERS, ETC ETC
 
         // Notify observers of pacman's new position/direction

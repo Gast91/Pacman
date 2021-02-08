@@ -52,7 +52,7 @@ private:
     virtual void updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement) override
     {
         if      (state == GhostState::Chase)
-            target = Util::distance(Util::coordsToPosition(pacMovement.first), sprite.getPosition()) <= 8 * Config::ENTITY_SIZE ? scatterTarget : pacMovement.first;
+            target = Util::distance(Util::coordsToPosition(pacMovement.first), getPosition()) <= 8 * Config::ENTITY_SIZE ? scatterTarget : pacMovement.first;
         else if (state == GhostState::Scatter) target = scatterTarget;
         else                                   target = frightenedTarget;
     }

@@ -13,7 +13,6 @@ protected:
     const sf::Vector2i frightenedTarget;
     GhostState state = GhostState::Scatter;
 
-	//const std::unique_ptr<sf::Texture> huntedSpritesheet;  // SAME FOR ALL!!!!!! STATIC
     HuntedAnimation<4> huntedAnim;
     EatenAnimation<4>  eatenAnim;
 
@@ -25,16 +24,20 @@ public:
     Ghost(const char* spriteSheet, const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos);
     virtual ~Ghost() = default;
 
+    // Entity Interface Implementation
 	virtual void move() override;
     virtual void changeDirection(const sf::Vector2i target) override;
 
+    // Subject Interface Implementation
     virtual void notifyObservers(GhostState gs) override {}
 
+    // GhostObserver Interface Implementation
     virtual void updateState(GhostState gs);
     virtual void updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement) override;
     virtual GhostState getState() const override;
     virtual bool isNearHome() const override;
     virtual sf::Vector2i getCoords() const override;
+    virtual sf::FloatRect getGlobalBounds() const override;
 
     const sf::VertexArray& debugLines(const sf::Color color);
 };

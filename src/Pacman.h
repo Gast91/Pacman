@@ -7,18 +7,17 @@ private:
 	const Level* level;
 	sf::Vector2i nextTurn = EAST;
 
-	//bool isDead = false;
-
-	//const std::unique_ptr<sf::Texture> deathSpritesheet;
-	DeathAnimation<12> deathAnim;
+	DeathAnimation<13> deathAnim;
 public:
 	Pacman(const Level* lvl, sf::Vector2i gridPos);
 	virtual ~Pacman() = default;
 
+	void rip();
+
     // PacmanObserver Interface Implementation
     virtual void teleport(int newX) override;
     virtual std::pair<sf::Vector2i, sf::Vector2i> getMovement() const override;
-	//notify dead?
+	virtual sf::FloatRect getGlobalBounds() const override;
 
     //Entity Interface Implementation
 	virtual void changeDirection(const sf::Vector2i nxtTurn) override;

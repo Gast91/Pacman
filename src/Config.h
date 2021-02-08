@@ -84,29 +84,18 @@ namespace Util
 }
 
 // TODO:
-//-----------------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 6. Actual game logic:
-//       Pacman states (alive - dead) - SOMEWHAT DONE
-//       distance detection issues... Collision....return rectB.getGlobalBounds().intersects(rectA.getGlobalBounds());
-//       sf::deltaV for movement
-//       slow down pacman as well
-//       entities inheriting from sprites?
-//       ghosts get 'unloaded' when pacman dies and then animation is played (full circle to puff then restart)
+//       sf::deltaV for movement - slow down pacman as well
 //       game 'pauses' for a sec when pacman eats a ghost and point text is shown (technically the dead ghost speed through to its home but whatevs)
 //       hunted anim 'flashes' only during the end of hunted period - otherwise it stays blue (do they swap back to hunting when they reach home or wait for hunted to end?)
 //       ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
 //       inky (and another) very rarely gets in the ghost house without being frightened   
-//       Win / Loss
-//       Multiple lives - (3 left looking pacmans, bottom left) - at (re)start one gets removed - when ready!text is shown
+//       Win / Loss / Multiple lives - (3 left looking pacmans, bottom left) - at (re)start one gets removed - when ready!text is shown
 //       70 dots and then 170 --> fruit (time limit?)
-//-----------------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 7. Text - Media:
 //       Score counter
 //       Lives counter
 //       Game sound
-//-----------------------------------------------------------------------------------------------------------------------------
-// 8. Cleanup:
-//       Various codebase improvements (consts, pointers, refs...)
-//       Cmd arguments
-//       Error handling for resource files and error messages
-//       .... :)
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -58,19 +58,23 @@ int main()
 			}
 		}
 
-        if (!level->gameOver())  // needs work
-        {
-            pacman->move();
-            level->update();
-            for (auto& ghost : ghosts) ghost->move();
-        }
+		if (!level->gameOver())
+		{
+			pacman->move();
+			level->update();
+			for (auto& ghost : ghosts) ghost->move();
+		}
+		else pacman->rip();  // once anims done, restart if more lives else reset game with spacebar or something?
 
 		window.clear();
 		window.draw(*level);
 		window.draw(*pacman);
-        for (const auto& ghost : ghosts) window.draw(*ghost);
-        // Draw debug pathfinding lines
-        for (const auto& ghost : ghosts) window.draw(ghost->debugLines(sf::Color::Red));
+		if (!level->gameOver())
+		{
+			for (const auto& ghost : ghosts) window.draw(*ghost);
+			// Draw debug pathfinding lines
+			for (const auto& ghost : ghosts) window.draw(ghost->debugLines(sf::Color::Red));
+		}
 		window.display();
 	}
     //_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF);

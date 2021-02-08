@@ -1,7 +1,7 @@
 #include "Ghost.h"
 
 Ghost::Ghost(const char* spritesheet, const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
-    : Entity(spritesheet, gridPos), aStar(astar), scatterTarget(scatterPos), frightenedTarget(frightenedPos)//, huntedSpritesheet(Util::loadTexture(Config::sprites::hunted))
+    : Entity(spritesheet, gridPos), aStar(astar), scatterTarget(scatterPos), frightenedTarget(frightenedPos)
 {
     huntedAnim.setTexture(Config::sprites::hunted);
     velocity *= 0.5f;
@@ -15,15 +15,15 @@ void Ghost::updateAnimation(const sf::Vector2i direction)
     case GhostState::Waiting:
     case GhostState::Chase:
     case GhostState::Scatter:
-        sprite.setTexture(movAnim.getTexture());
+        setTexture(movAnim.getTexture());
         Entity::updateAnimation(direction);
         break;
     case GhostState::Frightened:
-        sprite.setTexture(huntedAnim.getTexture());
-        sprite.setTextureRect(huntedAnim.next());
+        setTexture(huntedAnim.getTexture());
+        setTextureRect(huntedAnim.next());
         break;
     case GhostState::Dead:
-        sprite.setTextureRect(eatenAnim.next(direction));
+        setTextureRect(eatenAnim.next(direction));
         break;
     default: break;
     }
@@ -54,13 +54,13 @@ void Ghost::move()
     if (state == GhostState::Waiting) return;
     if (inBetween)
     {
-        sprite.move(direction.x * velocity, direction.y * velocity);
+        sf::Sprite::move(direction.x * velocity, direction.y * velocity);
 
         sf::Vector2f nodePos = Util::coordsToPosition(gridPosition + direction);
-        if (Util::distance(nodePos, sprite.getPosition()) <= Config::ENTITY_SIZE / 2.0f) // bit less? in others as well
+        if (Util::distance(nodePos, getPosition()) <= Config::ENTITY_SIZE / 2.0f) //sf::Sprite::getGlobalBounds().contains(nodePos)
         {
             gridPosition += direction;
-            sprite.setPosition(nodePos);
+            setPosition(nodePos);
             inBetween = false;
         }
     }
@@ -91,12 +91,10 @@ void Ghost::updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement)
 
 GhostState Ghost::getState() const { return state; }
 
-bool Ghost::isNearHome() const
-{
-    return Util::distance(Util::coordsToPosition(frightenedTarget), sprite.getPosition()) <= Config::ENTITY_SIZE / 2.0f ? true : false;
-}
+bool Ghost::isNearHome() const { return sf::Sprite::getGlobalBounds().contains(Util::coordsToPosition(frightenedTarget)); }
 
 sf::Vector2i Ghost::getCoords() const { return gridPosition; }
+sf::FloatRect Ghost::getGlobalBounds() const { return sf::Sprite::getGlobalBounds(); }
 
 const sf::VertexArray& Ghost::debugLines(const sf::Color color)
 {
