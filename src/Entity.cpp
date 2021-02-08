@@ -9,4 +9,4 @@ Entity::Entity(const char* spriteSheet, sf::Vector2i gridPos)
     setPosition(Config::ENTITY_SIZE * gridPosition.x, Config::ENTITY_SIZE * gridPosition.y);
 }
 
-void Entity::updateAnimation(const sf::Vector2i direction) { setTextureRect(movAnim.next(direction)); }
+void Entity::updateAnimation(const sf::Vector2i& direction) { setTextureRect(movAnim.next(direction)); }

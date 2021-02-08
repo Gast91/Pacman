@@ -6,7 +6,6 @@ class Ghost : public Entity, public GhostObserver, public Subject
 {
 protected:
 	const AStar* aStar;
-    bool inBetween = false;
 
     sf::Vector2i target;
     const sf::Vector2i scatterTarget;
@@ -19,14 +18,14 @@ protected:
     std::deque<std::unique_ptr<Node>> path;
     sf::VertexArray pathLines;
 
-    virtual void updateAnimation(const sf::Vector2i direction) override;
+    virtual void updateAnimation(const sf::Vector2i& direction) override;
 public:
     Ghost(const char* spriteSheet, const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos);
     virtual ~Ghost() = default;
 
     // Entity Interface Implementation
 	virtual void move() override;
-    virtual void changeDirection(const sf::Vector2i target) override;
+    virtual void changeDirection(const sf::Vector2i& target) override;
 
     // Subject Interface Implementation
     virtual void notifyObservers(GhostState gs) override {}

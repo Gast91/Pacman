@@ -44,7 +44,7 @@ bool Level::isIntersection(const sf::Vector2i coords) const
 {
     if (!tileGrid[coords.x][coords.y]->checked)
     {
-        for (const auto dir : { NORTH, SOUTH, EAST, WEST })
+        for (const auto& dir : { NORTH, SOUTH, EAST, WEST })
         {
             sf::Vector2i neighbor = coords + dir;
             if (neighbor.x < 0 || neighbor.y < 0 || neighbor.x > Config::ROWS - 1 || neighbor.y > Config::COLS - 1) continue;

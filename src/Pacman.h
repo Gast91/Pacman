@@ -7,6 +7,8 @@ private:
 	const Level* level;
 	sf::Vector2i nextTurn = EAST;
 
+	bool inBetween = false;
+
 	DeathAnimation<13> deathAnim;
 public:
 	Pacman(const Level* lvl, sf::Vector2i gridPos);
@@ -20,6 +22,6 @@ public:
 	virtual sf::FloatRect getGlobalBounds() const override;
 
     //Entity Interface Implementation
-	virtual void changeDirection(const sf::Vector2i nxtTurn) override;
+	virtual void changeDirection(const sf::Vector2i& nxtTurn) override;
 	virtual void move() override;
 };

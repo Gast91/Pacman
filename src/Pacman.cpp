@@ -19,18 +19,18 @@ void Pacman::teleport(int newX)
 std::pair<sf::Vector2i, sf::Vector2i> Pacman::getMovement() const { return std::make_pair(gridPosition, direction); }
 sf::FloatRect Pacman::getGlobalBounds() const { return sf::Sprite::getGlobalBounds(); }
 
-void Pacman::changeDirection(const sf::Vector2i nxtTurn) { nextTurn = nxtTurn; }
+void Pacman::changeDirection(const sf::Vector2i& nxtTurn) { nextTurn = nxtTurn; }
 
 void Pacman::move()
 {
 	// Pacman can turn without hitting a wall or the ghost house gates, so change its direction
-	if (!level->isInaccessible(gridPosition + nextTurn)) { direction = nextTurn; }
+	if (!level->isInaccessible(gridPosition + nextTurn)) direction = nextTurn;
 
 	// Do nothing if Pacman is about to move into a wall or the ghost house gates
 	if (level->isInaccessible(gridPosition + direction)) return;
 
 	// Play Pacman animation according to the direction it's facing
-    updateAnimation(direction);  // --> if dead we play dead anim...
+    updateAnimation(direction);
 
 	// Move Pacman and update its position on the level
 	sf::Sprite::move(direction.x * velocity, direction.y * velocity);

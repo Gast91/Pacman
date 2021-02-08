@@ -8,7 +8,7 @@ Ghost::Ghost(const char* spritesheet, const AStar* astar, sf::Vector2i gridPos, 
     pathLines.setPrimitiveType(sf::LineStrip);
 }
 
-void Ghost::updateAnimation(const sf::Vector2i direction)
+void Ghost::updateAnimation(const sf::Vector2i& direction)
 {
     switch (state)
     {
@@ -29,12 +29,12 @@ void Ghost::updateAnimation(const sf::Vector2i direction)
     }
 }
 
-void Ghost::changeDirection(const sf::Vector2i target)
+void Ghost::changeDirection(const sf::Vector2i& target)
 {
     int bestDist = INT_MAX;
     sf::Vector2i bestDir;
 
-    for (const auto& dir : { NORTH, WEST, SOUTH, EAST }) // HMMM what about east
+    for (const auto& dir : { NORTH, WEST, SOUTH, EAST })
     {
         if (dir != direction * -1 && !aStar->isWall(gridPosition + dir))
         {
@@ -94,6 +94,7 @@ GhostState Ghost::getState() const { return state; }
 bool Ghost::isNearHome() const { return sf::Sprite::getGlobalBounds().contains(Util::coordsToPosition(frightenedTarget)); }
 
 sf::Vector2i Ghost::getCoords() const { return gridPosition; }
+
 sf::FloatRect Ghost::getGlobalBounds() const { return sf::Sprite::getGlobalBounds(); }
 
 const sf::VertexArray& Ghost::debugLines(const sf::Color color)

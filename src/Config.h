@@ -87,6 +87,7 @@ namespace Util
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 6. Actual game logic:
 //       sf::deltaV for movement - slow down pacman as well
+//       sf::clock for timers rather than mine
 //       game 'pauses' for a sec when pacman eats a ghost and point text is shown (technically the dead ghost speed through to its home but whatevs)
 //       hunted anim 'flashes' only during the end of hunted period - otherwise it stays blue (do they swap back to hunting when they reach home or wait for hunted to end?)
 //       ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
