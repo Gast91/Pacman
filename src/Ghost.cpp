@@ -1,8 +1,9 @@
 #include "Ghost.h"
 
 Ghost::Ghost(const char* spritesheet, const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
-    : Entity(spritesheet, gridPos), aStar(astar), scatterTarget(scatterPos), frightenedTarget(frightenedPos), huntedSpritesheet(Util::loadTexture(Config::sprites::hunted))
+    : Entity(spritesheet, gridPos), aStar(astar), scatterTarget(scatterPos), frightenedTarget(frightenedPos)//, huntedSpritesheet(Util::loadTexture(Config::sprites::hunted))
 {
+    huntedAnim.setTexture(Config::sprites::hunted);
     velocity *= 0.5f;
     pathLines.setPrimitiveType(sf::LineStrip);
 }
@@ -14,15 +15,15 @@ void Ghost::updateAnimation(const sf::Vector2i direction)
     case GhostState::Waiting:
     case GhostState::Chase:
     case GhostState::Scatter:
-        sprite.setTexture(*spriteSheet);
+        sprite.setTexture(movAnim.getTexture());
         Entity::updateAnimation(direction);
         break;
     case GhostState::Frightened:
-        sprite.setTexture(*huntedSpritesheet);
-        sprite.setTextureRect(huntedAnim.nextFright());  // meh
+        sprite.setTexture(huntedAnim.getTexture());
+        sprite.setTextureRect(huntedAnim.next());
         break;
     case GhostState::Dead:
-        sprite.setTextureRect(huntedAnim.next(direction));
+        sprite.setTextureRect(eatenAnim.next(direction));
         break;
     default: break;
     }

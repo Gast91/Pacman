@@ -4,6 +4,7 @@
 class GhostObserver
 {
 public:
+    virtual ~GhostObserver() = default;
     virtual void updateState(GhostState gs) = 0;
     virtual void updateTarget(std::pair<sf::Vector2i, sf::Vector2i> pacMovement) = 0;
     virtual GhostState getState() const = 0;
@@ -15,6 +16,7 @@ public:
 class PacmanObserver
 {
 public:
+    virtual ~PacmanObserver() = default;
     virtual void teleport(int newX) = 0;
     virtual std::pair<sf::Vector2i, sf::Vector2i> getMovement() const = 0;
 };
@@ -24,6 +26,7 @@ class Subject
 protected:
     std::vector<GhostObserver*> observers;
 public:
+    virtual ~Subject() = default;
     virtual void registerObserver(GhostObserver* observer) { observers.push_back(observer); }
     virtual void notifyObservers(GhostState gs) = 0;
 };

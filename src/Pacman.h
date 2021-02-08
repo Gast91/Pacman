@@ -10,10 +10,10 @@ private:
 	//bool isDead = false;
 
 	//const std::unique_ptr<sf::Texture> deathSpritesheet;
-	//DeathAnimation<12> deathAnim;
+	DeathAnimation<12> deathAnim;
 public:
 	Pacman(const Level* lvl, sf::Vector2i gridPos);
-	virtual ~Pacman() {};
+	virtual ~Pacman() = default;
 
     // PacmanObserver Interface Implementation
     virtual void teleport(int newX) override;

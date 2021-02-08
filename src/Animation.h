@@ -5,84 +5,79 @@
 template <unsigned int animNo>
 class Animation
 {
-private:
+protected:
     unsigned int currentAnim = 0;
+    std::array<sf::IntRect, animNo> anims;
+    std::unique_ptr<sf::Texture> spriteSheet;
 public:
     virtual ~Animation() {}
-    virtual inline unsigned int next() { return ++currentAnim %= animNo; }  // next & nextPos?
-    virtual sf::IntRect& next(const sf::Vector2i direction) = 0;
+    virtual inline unsigned int nextPos() { return ++currentAnim %= animNo; }
+    virtual sf::IntRect& next(const sf::Vector2i direction = {0, 0}) { return anims[nextPos()]; }
+    const sf::Texture& getTexture() const { return *spriteSheet; }
+    void setTexture(const char* texture) { spriteSheet = Util::loadTexture(texture); }
 };
 
-//template<unsigned int animNo>
-//class DeathAnimation : public Animation<animNo>
-//{
-//private:
-//    std::array<sf::IntRect, animNo> death;
-//public:
-//    constexpr DeathAnimation()
-//    {
-//        for (int i = 0; i < animNo; ++i) death[i] = { i * Config::sprites::size, 0, Config::sprites::size, Config::sprites::size };
-//    }
-//    virtual ~DeathAnimation() {}
-//    virtual sf::IntRect& next(const sf::Vector2i direction) override {} //... must return val...
-//};
-
-template <unsigned int animNo>
+template <unsigned int animNo, unsigned int perMove>
 class MovementAnimation : public Animation<animNo>
 {
 private:
-    std::array<sf::IntRect, animNo> up;
-    std::array<sf::IntRect, animNo> down;
-    std::array<sf::IntRect, animNo> left;
-    std::array<sf::IntRect, animNo> right;
+    unsigned int offset = 0;
 public:
-    constexpr MovementAnimation()
+    MovementAnimation()
     {
-        for (int i = 0; i < animNo; ++i)
+        for (int i = 0, j = 0; i < animNo - 1; i += 2, ++j)
         {
-            right[i] = { i * Config::sprites::size,  0                        , Config::sprites::size, Config::sprites::size };
-            left[i]  = { i * Config::sprites::size,      Config::sprites::size, Config::sprites::size, Config::sprites::size };
-            up[i]    = { i * Config::sprites::size,  2 * Config::sprites::size, Config::sprites::size, Config::sprites::size };
-            down[i]  = { i * Config::sprites::size,  3 * Config::sprites::size, Config::sprites::size, Config::sprites::size };
+            Animation<animNo>::anims[i]      = { 0                    ,  j * Config::sprites::size, Config::sprites::size, Config::sprites::size };
+            Animation<animNo>::anims[i + 1]  = { Config::sprites::size,  j * Config::sprites::size, Config::sprites::size, Config::sprites::size };
         }
     }
     virtual ~MovementAnimation() {}
-    virtual sf::IntRect& next(const sf::Vector2i direction) override
+    virtual inline unsigned int nextPos() override { return (++Animation<animNo>::currentAnim %= perMove) + offset; }
+    virtual sf::IntRect& next(const sf::Vector2i direction = {0, 0}) override
     {
-        if      (direction == NORTH) return    up.at(Animation<animNo>::next());
-        else if (direction == SOUTH) return  down.at(Animation<animNo>::next());
-        else if (direction == WEST)  return  left.at(Animation<animNo>::next());
-        else if (direction == EAST)  return right.at(Animation<animNo>::next());
-        throw std::exception("Unspecified Animation Direction");
+        if (direction == sf::Vector2i{0, 0}) throw std::exception("Unspecified Animation Direction");
+        offset = Config::offsetDict.at({direction.x, direction.y});
+	    return Animation<animNo>::anims[nextPos()];
     }
 };
 
 template <unsigned int animNo>
-class HuntedAnimation : public Animation<animNo>
+struct HuntedAnimation : public Animation<animNo>
 {
-private:
-    std::array<sf::IntRect, animNo> frightened;
-    std::array<sf::IntRect, animNo> deadMove;
-public:
-    constexpr HuntedAnimation()
+    HuntedAnimation()
     {
         for (int i = 0; i < animNo; ++i)
-        {
-            frightened[i] = { i * Config::sprites::size, 0                    , Config::sprites::size, Config::sprites::size };
-            deadMove[i]   = { i * Config::sprites::size, Config::sprites::size, Config::sprites::size, Config::sprites::size };
-        }
+            Animation<animNo>::anims[i] = { i * Config::sprites::size, 0, Config::sprites::size, Config::sprites::size };
     }
     virtual ~HuntedAnimation() {}
-    constexpr sf::IntRect& nextFright() { return frightened[Animation<animNo>::next()]; }
-    virtual sf::IntRect& next(const sf::Vector2i direction) override
+};
+
+template <unsigned int animNo>
+struct EatenAnimation: public Animation<animNo>
+{
+    EatenAnimation()
     {
-        if      (direction == NORTH) return deadMove.at(0);
-        else if (direction == SOUTH) return deadMove.at(1);
-        else if (direction == WEST)  return deadMove.at(2);
-        else if (direction == EAST)  return deadMove.at(3);
+        for (int i = 0; i < animNo; ++i)
+            Animation<animNo>::anims[i] = { i * Config::sprites::size, Config::sprites::size, Config::sprites::size, Config::sprites::size };
+    }
+    virtual ~EatenAnimation() {}
+    virtual sf::IntRect& next(const sf::Vector2i direction = {0, 0}) override
+    {
+        if      (direction == NORTH) return  Animation<animNo>::anims[0];
+        else if (direction == SOUTH) return  Animation<animNo>::anims[1];
+        else if (direction == WEST)  return  Animation<animNo>::anims[2];
+        else if (direction == EAST)  return  Animation<animNo>::anims[3];
         throw std::exception("Unspecified Animation Direction");
     }
 };
 
-// pacman's dead animation??
-// Move textures in here?
+template<unsigned int animNo>
+struct DeathAnimation : public Animation<animNo>
+{
+    DeathAnimation()
+    {
+        for (int i = 0; i < animNo; ++i)
+            Animation<animNo>::anims[i] = { i * Config::sprites::size, 0, Config::sprites::size, Config::sprites::size };
+    }
+    virtual ~DeathAnimation() {}
+};

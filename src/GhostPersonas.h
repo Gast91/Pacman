@@ -14,7 +14,7 @@ private:
 public:
     Pinky(const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
         : Ghost(Config::sprites::pinky, astar, gridPos, scatterPos, frightenedPos) {}
-    virtual ~Pinky() {}
+    virtual ~Pinky() = default;
 };
 
 class Inky : public Ghost
@@ -38,7 +38,7 @@ public:
         state = GhostState::Waiting;
         updateAnimation(EAST);
     }
-    virtual ~Inky() {}
+    virtual ~Inky() = default;
 
     virtual void updateState(GhostState gs) override
     {
@@ -63,7 +63,7 @@ public:
         state = GhostState::Waiting; 
         updateAnimation(WEST);
     }
-    virtual ~Clyde() {}
+    virtual ~Clyde() = default;
 
     virtual void updateState(GhostState gs) override
     {

@@ -1,7 +1,7 @@
 #include "Pacman.h"
 
-Pacman::Pacman(const Level* lvl, sf::Vector2i gridPos) 
-	: Entity(Config::sprites::pacman, gridPos), level(lvl) /*,deathSpritesheet(Util::loadTexture(Config::sprites::pacDeath))*/ {}
+Pacman::Pacman(const Level* lvl, sf::Vector2i gridPos)
+	: Entity(Config::sprites::pacman, gridPos), level(lvl) { deathAnim.setTexture(Config::sprites::pacDeath); }//, deathSpritesheet(Util::loadTexture(Config::sprites::pacDeath)) {}
 
 void Pacman::teleport(int newX)
 {
@@ -22,7 +22,7 @@ void Pacman::move()
 	if (level->isInaccessible(gridPosition + direction)) return;
 
 	// Play Pacman animation according to the direction it's facing
-    updateAnimation(direction);
+    updateAnimation(direction);  // --> if dead we play dead anim...
 
 	// Move Pacman and update its position on the level
 	sprite.move(direction.x * velocity, direction.y * velocity);

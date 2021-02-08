@@ -13,8 +13,9 @@ protected:
     const sf::Vector2i frightenedTarget;
     GhostState state = GhostState::Scatter;
 
-	const std::unique_ptr<sf::Texture> huntedSpritesheet;  // SAME FOR ALL!!!!!! STATIC
+	//const std::unique_ptr<sf::Texture> huntedSpritesheet;  // SAME FOR ALL!!!!!! STATIC
     HuntedAnimation<4> huntedAnim;
+    EatenAnimation<4>  eatenAnim;
 
     std::deque<std::unique_ptr<Node>> path;
     sf::VertexArray pathLines;
@@ -22,7 +23,7 @@ protected:
     virtual void updateAnimation(const sf::Vector2i direction) override;
 public:
     Ghost(const char* spriteSheet, const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos);
-    virtual ~Ghost() {};
+    virtual ~Ghost() = default;
 
 	virtual void move() override;
     virtual void changeDirection(const sf::Vector2i target) override;

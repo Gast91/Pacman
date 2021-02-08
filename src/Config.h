@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include "SFML/Graphics.hpp"
 
 const sf::Vector2i NORTH{ 0, -1};
@@ -21,10 +22,10 @@ namespace Config
   //-----------------------------------------------------------------
   //--------------------GAME ENTITIES SIZES--------------------------
   //-----------------------------------------------------------------
-    constexpr float ENTITY_SIZE = 16.0f * SCALE;
+    constexpr float ENTITY_SIZE   = 16.0f * SCALE;
     constexpr float SCALED_OFFSET = ENTITY_SIZE / ( 3 * SCALE );
-    constexpr float DOT_SIZE    = 2.5f  * SCALE;
-    constexpr float B_DOT_SIZE  = 5.0f  * SCALE;
+    constexpr float DOT_SIZE      = 2.5f  * SCALE;
+    constexpr float B_DOT_SIZE    = 5.0f  * SCALE;
   //-----------------------------------------------------------------
     constexpr int ROWS = 28, COLS = 31;
 
@@ -32,11 +33,11 @@ namespace Config
 
     namespace Keybinds
     {
-        constexpr sf::Keyboard::Key UP = sf::Keyboard::Key::W;
-        constexpr sf::Keyboard::Key DOWN = sf::Keyboard::Key::S;
-        constexpr sf::Keyboard::Key LEFT = sf::Keyboard::Key::A;
+        constexpr sf::Keyboard::Key UP    = sf::Keyboard::Key::W;
+        constexpr sf::Keyboard::Key DOWN  = sf::Keyboard::Key::S;
+        constexpr sf::Keyboard::Key LEFT  = sf::Keyboard::Key::A;
         constexpr sf::Keyboard::Key RIGHT = sf::Keyboard::Key::D;
-        constexpr sf::Keyboard::Key ESC = sf::Keyboard::Key::Escape;
+        constexpr sf::Keyboard::Key ESC   = sf::Keyboard::Key::Escape;
     }
 
     namespace sprites
@@ -45,13 +46,16 @@ namespace Config
         constexpr int size = 16;
         constexpr const char* bckgnd   = "resources/sprites/background.png";
         constexpr const char* pacman   = "resources/sprites/pacman_spritesheet.png";
-        constexpr const char* pacDeath = "resource/sprites/pacman_death_spritesheet.png";
+        constexpr const char* pacDeath = "resources/sprites/pacman_death_spritesheet.png";
         constexpr const char* blinky   = "resources/sprites/blinky_spritesheet.png";
         constexpr const char* pinky    = "resources/sprites/pinky_spritesheet.png";
         constexpr const char* inky     = "resources/sprites/inky_spritesheet.png";
         constexpr const char* clyde    = "resources/sprites/clyde_spritesheet.png";
         constexpr const char* hunted   = "resources/sprites/ghost_spritesheet.png";
     }
+
+    const std::map <std::pair<int, int>, unsigned int> offsetDict = { {{ EAST.x,  EAST.y }, 0 }, {{ WEST.x,  WEST.y }, 2 },
+                                                                      {{ NORTH.x, NORTH.y}, 4 }, {{ SOUTH.x, SOUTH.y}, 6 }};
 }
 
 namespace Util
@@ -83,13 +87,15 @@ namespace Util
 //-----------------------------------------------------------------------------------------------------------------------------
 // 6. Actual game logic:
 //       Pacman states (alive - dead) - SOMEWHAT DONE
-//       distance detection issues...
+//       distance detection issues... Collision....return rectB.getGlobalBounds().intersects(rectA.getGlobalBounds());
+//       sf::deltaV for movement
 //       slow down pacman as well
+//       entities inheriting from sprites?
 //       ghosts get 'unloaded' when pacman dies and then animation is played (full circle to puff then restart)
 //       game 'pauses' for a sec when pacman eats a ghost and point text is shown (technically the dead ghost speed through to its home but whatevs)
 //       hunted anim 'flashes' only during the end of hunted period - otherwise it stays blue (do they swap back to hunting when they reach home or wait for hunted to end?)
 //       ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
-//       inky (and another) very rarely gets in the ghost house without being frightened
+//       inky (and another) very rarely gets in the ghost house without being frightened   
 //       Win / Loss
 //       Multiple lives - (3 left looking pacmans, bottom left) - at (re)start one gets removed - when ready!text is shown
 //       70 dots and then 170 --> fruit (time limit?)

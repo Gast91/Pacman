@@ -1,9 +1,10 @@
 #include "Entity.h"
 
 Entity::Entity(const char* spriteSheet, sf::Vector2i gridPos) 
-    : gridPosition(gridPos), spriteSheet(Util::loadTexture(spriteSheet))
+    : gridPosition(gridPos)//, spriteSheet(Util::loadTexture(spriteSheet))
 {
-    sprite.setTexture(*Entity::spriteSheet);
+    movAnim.setTexture(spriteSheet);
+    sprite.setTexture(movAnim.getTexture());
     sprite.scale(Config::SCALE, Config::SCALE);
     sprite.setPosition(Config::ENTITY_SIZE * gridPosition.x, Config::ENTITY_SIZE * gridPosition.y);
 }
