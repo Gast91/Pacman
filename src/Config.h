@@ -31,7 +31,10 @@ namespace Config
   //-----------------------------------------------------------------
     constexpr int ROWS = 28, COLS = 31;
 
-    constexpr const char* grid = "resources/grid.txt";
+    constexpr const char* grid     = "resources/grid.txt";
+    constexpr const char* fontFile = "resources/fonts/arial.ttf";
+
+    constexpr unsigned int textCharSize = static_cast<unsigned int>(12 * SCALE);
 
     namespace Keybinds
     {
@@ -70,10 +73,18 @@ namespace Util
         throw std::exception("Cannot find texture");
     };
 
-    auto createSprite = [](const sf::Texture& text, sf::Vector2f pos = { 0.0f, 0.0f })
+    auto loadFont = []()
+    {
+        auto font = std::make_unique<sf::Font>();
+        if (font->loadFromFile(Config::fontFile)) 
+            return std::move(font);
+        throw std::exception("Cannot find font");
+    };
+
+    auto createSprite = [](const sf::Texture& texture, sf::Vector2f pos = { 0.0f, 0.0f })
     {
         std::unique_ptr<sf::Sprite> sprite;
-        sprite = std::make_unique<sf::Sprite>(text);
+        sprite = std::make_unique<sf::Sprite>(texture);
         sprite->scale(Config::SCALE, Config::SCALE);
         sprite->setPosition(pos);
         return std::move(sprite);
@@ -97,17 +108,20 @@ namespace Util
 
 // TODO:
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// 6. Actual game logic:
-//       sf::deltaV for movement - slow down pacman as well
-//       sf::clock for timers rather than mine
-//       game 'pauses' for a sec when pacman eats a ghost and point text is shown (technically the dead ghost speed through to its home but whatevs)
-//       hunted anim 'flashes' only during the end of hunted period - otherwise it stays blue (do they swap back to hunting when they reach home or wait for hunted to end?)
-//       ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
-//       inky (and another) very rarely gets in the ghost house without being frightened
-//       70 dots and then 170 --> fruit (time limit?)
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// 7. Text - Media:
-//       Score counter
-//       Win / Loss / Ready! / Start etc Text
-//       Game sound
+// Issues:
+//     - sf::deltaV for movement - slow down pacman as well
+//     - sf::clock for timers rather than mine
+//     - collision improvements and general speed improvements - needed for new lvls also
+//     - game 'pauses' for a sec when pacman eats a ghost and point text is shown (technically the dead ghost speed through to its home but whatevs)
+//     - hunted anim 'flashes' only during the end of hunted period - otherwise it stays blue (do they swap back to hunting when they reach home or wait for hunted to end?)
+//     - ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
+//     - inky (and another) very rarely gets in the ghost house without being frightened
+// Additions:
+//     - pacman starts as a ball until 'space' is pressed (press space text is shown?)
+//     - In each freightened cycle ghosts give points (1st -> 200, 2nd -> 4, 3rd -> 800, 4th -> 1600, resets when cycle ends or all ghosts eaten)
+//     - 70 dots and then 170 --> fruit (time limit?) - how often they appear in a level? banner displays the fruits at this stage (previous lvl fruits + current)
+//     - cherries(100pts - lvl1) | Strawb(300pts - lvl2) | Orange(500pts - lvl3,4) | Apple(700pts - lvl5,6) | Grape(1kpts - lvl7,8) | Ship(2kpts - lvl10)
+//       Bell(3kpts - lvl11,12) | Key(5kpts - lvl13+)
+//     - Win / Loss / Ready! / Start etc Text - figure where to place it
+//     - Game sound
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

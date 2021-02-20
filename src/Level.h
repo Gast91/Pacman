@@ -20,6 +20,7 @@ private:
     Timer scatterChaseTimer;
     Timer huntedTimer;
 
+    ScoreDisplay score;
     Lives lives;
     PacmanObserver* pacmanObserver;
 
@@ -27,14 +28,14 @@ private:
     int dotsEaten = 0;
 
     bool shouldScatter() const;
-    void restart();
+    void reset();
 public:
-	Level();
+    Level();
 
     void registerPacman(PacmanObserver* pacObs);
     virtual void notifyObservers(const GhostState gs) override;
 
-	bool isWall(const sf::Vector2i coords) const;
+    bool isWall(const sf::Vector2i coords) const;
     bool isInaccessible(const sf::Vector2i coords) const;
     bool isIntersection(const sf::Vector2i coords) const;
 
@@ -43,5 +44,5 @@ public:
 
     void update();
 
-	void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 };

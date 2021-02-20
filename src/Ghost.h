@@ -5,7 +5,7 @@
 class Ghost : public Entity, public GhostObserver, public Subject
 {
 protected:
-	const AStar* aStar;
+    const AStar* aStar;
 
     sf::Vector2i target;
     const sf::Vector2i scatterTarget;
@@ -24,7 +24,7 @@ public:
     virtual ~Ghost() = default;
 
     // Entity Interface Implementation
-	virtual void move() override;
+    virtual void move() override;
     virtual void changeDirection(const sf::Vector2i& target) override;
 
     // Subject Interface Implementation

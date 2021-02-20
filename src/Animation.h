@@ -37,7 +37,7 @@ public:
     {
         if (direction == sf::Vector2i{0, 0}) throw std::exception("Unspecified Animation Direction");
         offset = Config::offsetDict.at({direction.x, direction.y});
-	    return Animation<animNo>::anims[nextPos()];
+        return Animation<animNo>::anims[nextPos()];
     }
 };
 

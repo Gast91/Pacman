@@ -19,6 +19,7 @@ struct Node
 class Tile : public sf::Drawable
 {
 private:
+    friend Level;
     const TileType type;
 
     bool eaten = false;
@@ -32,10 +33,8 @@ private:
 public:
     Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node* p = nullptr);
 
-	bool hasADot() const;
-	void setEaten();
+    bool hasADot() const;
+    void setEaten();
 
-	void draw(sf::RenderTarget &target, sf::RenderStates states) const;
-
-    friend Level;
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 };

@@ -65,20 +65,20 @@ bool Level::shouldScatter() const
     else return false;
 }
 
-void Level::restart()
+void Level::reset()
 {
     pacmanObserver->reset();
     for (auto& observer : observers) observer->reset();  // the observers themselves will handle their state
-    for (auto& cols : tileGrid) { for (auto& tile : cols) tile->reset(); }  // do they actually reset?? or only on total game reset?
+    //for (auto& cols : tileGrid) { for (auto& tile : cols) tile->reset(); }  // do they actually reset?? or only on total game reset?
     over = !over;
     --lives;
-    dotsEaten = 0;
-    scatterChaseTimer.startTimer();
+    //dotsEaten = 0;
+    //scatterChaseTimer.startTimer();
 }
 
 void Level::update()
 {
-    if (over && pacmanObserver->playDeath() && lives.getLives() > 0) restart();
+    if (over && pacmanObserver->playDeath() && lives.getLives() > 0) reset();
     else if (over) return;
 
     // Update pacman's position on the grid
@@ -96,6 +96,8 @@ void Level::update()
         }
         tileGrid[pacmanCoords.x][pacmanCoords.y]->setEaten();
         ++dotsEaten;
+        // Pacman 'earns' a life every 10k points - score increment is equivalent to score += 10 (each dot is 10 points not 1)
+        if (++score % 10000 == 0) ++lives;
     }
 
     // Check if frightened timer expired, notify ghosts and resume scatter/chase timer
@@ -133,7 +135,8 @@ void Level::update()
 
 void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-	target.draw(*background);
+    target.draw(*background);
     for (auto& col : tileGrid) { for (auto& tile : col) target.draw(*tile); }
     target.draw(lives);
+    target.draw(score);
 }
