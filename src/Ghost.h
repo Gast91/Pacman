@@ -37,6 +37,7 @@ public:
     virtual bool isNearHome() const override;
     virtual sf::Vector2i getCoords() const override;
     virtual sf::FloatRect getGlobalBounds() const override;
+    virtual void reset() override;
 
     const sf::VertexArray& debugLines(const sf::Color color);
 };

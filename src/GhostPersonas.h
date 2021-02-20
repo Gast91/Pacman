@@ -12,7 +12,7 @@ private:
         else                                   target = frightenedTarget;
     }
 public:
-    Pinky(const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
+    Pinky(const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos = INVALID)
         : Ghost(Config::sprites::pinky, astar, gridPos, scatterPos, frightenedPos) {}
     virtual ~Pinky() = default;
 };
@@ -32,9 +32,11 @@ private:
         else                                   target = frightenedTarget;
     }
 public:
-    Inky(const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
+    Inky(const AStar* astar, GhostObserver* trackObs, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos = INVALID)
         : Ghost(Config::sprites::inky, astar, gridPos, scatterPos, frightenedPos) 
-    { 
+    {
+        // Inky's movement depends on another ghost
+        registerObserver(trackObs);
         state = GhostState::Waiting;
         updateAnimation(EAST);
     }
@@ -44,6 +46,7 @@ public:
     {
         if ((state == GhostState::Waiting && aStar->canExit(30)) || state != GhostState::Waiting) state = gs;
     }
+    virtual void reset() override { Ghost::reset(); state = GhostState::Waiting; }
 };
 
 class Clyde : public Ghost
@@ -57,7 +60,7 @@ private:
         else                                   target = frightenedTarget;
     }
 public:
-    Clyde(const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
+    Clyde(const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos = INVALID)
         : Ghost(Config::sprites::clyde, astar, gridPos, scatterPos, frightenedPos) 
     { 
         state = GhostState::Waiting; 
@@ -69,4 +72,5 @@ public:
     {
         if ((state == GhostState::Waiting && aStar->canExit(80)) || state != GhostState::Waiting) state = gs;
     }
+    virtual void reset() override { Ghost::reset(); state = GhostState::Waiting; }
 };

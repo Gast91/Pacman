@@ -22,9 +22,11 @@ private:
     PacmanObserver* pacmanObserver;
 
     bool over = false;
+    unsigned int lives = 2;  // 3 total
     int dotsEaten = 0;
 
     bool shouldScatter() const;
+    void restart();
 public:
 	Level();
 

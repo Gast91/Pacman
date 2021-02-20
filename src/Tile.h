@@ -27,6 +27,8 @@ private:
 
     Node node;
     const std::unique_ptr<sf::CircleShape> dotSprite;
+
+    void reset();
 public:
     Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node* p = nullptr);
 

@@ -16,4 +16,6 @@ bool Tile::hasADot() const { return (type == TileType::Dot || type == TileType::
 
 void Tile::setEaten() { eaten = true; }
 
+void Tile::reset() { if (type == TileType::Dot || type == TileType::BigDot) eaten = false; }
+
 void Tile::draw(sf::RenderTarget &target, sf::RenderStates states) const { if (hasADot()) target.draw(*dotSprite); }

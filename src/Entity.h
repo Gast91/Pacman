@@ -5,6 +5,7 @@
 class Entity : public sf::Sprite
 {
 protected:
+    sf::Vector2i initialGridPos;
 	sf::Vector2i gridPosition;
     sf::Vector2i direction;
     float velocity = Config::ENTITY_SIZE;

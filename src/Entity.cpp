@@ -1,7 +1,7 @@
 #include "Entity.h"
 
 Entity::Entity(const char* spriteSheet, sf::Vector2i gridPos) 
-    : gridPosition(gridPos)
+    : gridPosition(gridPos), initialGridPos(gridPos)
 {
     movAnim.setTexture(spriteSheet);
     setTexture(movAnim.getTexture());

@@ -1,7 +1,7 @@
 #include "Ghost.h"
 
-Ghost::Ghost(const char* spritesheet, const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos)
-    : Entity(spritesheet, gridPos), aStar(astar), scatterTarget(scatterPos), frightenedTarget(frightenedPos)
+Ghost::Ghost(const char* spritesheet, const AStar* astar, sf::Vector2i gridPos, sf::Vector2i scatterPos, sf::Vector2i frightenedPos = INVALID)
+    : Entity(spritesheet, gridPos), aStar(astar), scatterTarget(scatterPos), frightenedTarget(frightenedPos == INVALID ? gridPos : frightenedPos)
 {
     huntedAnim.setTexture(Config::sprites::hunted);
     velocity *= 0.5f;
@@ -25,6 +25,7 @@ void Ghost::updateAnimation(const sf::Vector2i& direction)
     case GhostState::Dead:
         setTextureRect(eatenAnim.next(direction));
         break;
+    case GhostState::Paused:
     default: break;
     }
 }
@@ -51,7 +52,7 @@ void Ghost::changeDirection(const sf::Vector2i& target)
 
 void Ghost::move()
 {
-    if (state == GhostState::Waiting) return;
+    if (state == GhostState::Waiting || state == GhostState::Paused) return;
     if (inBetween)
     {
         sf::Sprite::move(direction.x * velocity, direction.y * velocity);
@@ -96,6 +97,15 @@ bool Ghost::isNearHome() const { return sf::Sprite::getGlobalBounds().contains(U
 sf::Vector2i Ghost::getCoords() const { return gridPosition; }
 
 sf::FloatRect Ghost::getGlobalBounds() const { return sf::Sprite::getGlobalBounds(); }
+
+void Ghost::reset()
+{
+    state = GhostState::Chase;
+    gridPosition = initialGridPos;
+    setPosition(Config::ENTITY_SIZE * gridPosition.x, Config::ENTITY_SIZE * gridPosition.y);
+    setTexture(movAnim.getTexture());
+    path.clear();
+}
 
 const sf::VertexArray& Ghost::debugLines(const sf::Color color)
 {

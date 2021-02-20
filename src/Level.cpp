@@ -1,6 +1,6 @@
 #include "Level.h"
 
-Level::Level() : 
+Level::Level() :
     tileGrid([]() {
         std::ifstream infile;
         infile.open(Config::grid);
@@ -70,8 +70,22 @@ bool Level::shouldScatter() const
     else return false;
 }
 
+void Level::restart()
+{
+    pacmanObserver->reset();
+    for (auto& observer : observers) observer->reset();  // the observers themselves will handle their state
+    for (auto& cols : tileGrid) { for (auto& tile : cols) tile->reset(); }
+    over = !over;
+    lives--;
+    dotsEaten = 0;
+    scatterChaseTimer.startTimer();
+}
+
 void Level::update()
 {
+    if (over && pacmanObserver->playDeath() && lives > 0) restart();
+    else if (over) return;
+
     // Update pacman's position on the grid
     const auto pacmanCoords = pacmanObserver->getMovement().first;
     // If pacman should teleport, notify and provide new grid position (currently only for X)
@@ -112,7 +126,10 @@ void Level::update()
         else if (obsState == GhostState::Dead && observer->isNearHome()) observer->updateState(huntedTimer.isRunning() ? GhostState::Frightened : GhostState::Scatter);
         // This ghost ate pacman
         else if ((obsState == GhostState::Chase || obsState == GhostState::Scatter) && colliding)
-            over = true;  // LIFE COUNTER, RESTART, TIMERS, ETC ETC
+        {
+            over = true;
+            notifyObservers(GhostState::Paused);
+        }
 
         // Notify observers of pacman's new position/direction
         observer->updateTarget(pacmanObserver->getMovement());
@@ -122,8 +139,5 @@ void Level::update()
 void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	target.draw(*background);
-    for (auto& col : tileGrid)
-    {
-        for (auto& tile : col) target.draw(*tile);
-    }
+    for (auto& col : tileGrid) { for (auto& tile : col) target.draw(*tile); }
 }

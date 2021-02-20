@@ -89,5 +89,6 @@ public:
         if (++progress == animNo - 1) done = true;
         return Animation<animNo>::next();
     }
+    void reset() { progress = 0; done = false; }
     bool isDone() const { return done; }
 };

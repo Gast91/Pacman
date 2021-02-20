@@ -2,12 +2,13 @@
 #include <map>
 #include "SFML/Graphics.hpp"
 
-const sf::Vector2i NORTH{ 0, -1};
-const sf::Vector2i SOUTH{ 0,  1};
-const sf::Vector2i WEST {-1,  0};
-const sf::Vector2i EAST { 1,  0};
+const sf::Vector2i NORTH   { 0, -1};
+const sf::Vector2i SOUTH   { 0,  1};
+const sf::Vector2i WEST    {-1,  0};
+const sf::Vector2i EAST    { 1,  0};
+const sf::Vector2i INVALID { -INT_MAX, -INT_MAX };
 
-enum class GhostState { Waiting, Chase, Scatter, Frightened, Dead };
+enum class GhostState { Waiting, Chase, Scatter, Frightened, Dead, Paused };
 enum class TileType   { Dot, Wall, BigDot, Gate = 7, None = 8, Teleporter = 9 };
 
 namespace Config 

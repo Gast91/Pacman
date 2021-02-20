@@ -3,11 +3,12 @@
 Pacman::Pacman(const Level* lvl, sf::Vector2i gridPos)
 	: Entity(Config::sprites::pacman, gridPos), level(lvl) { deathAnim.setTexture(Config::sprites::pacDeath); }
 
-void Pacman::rip()
+bool Pacman::playDeath()
 {
-	if (deathAnim.isDone()) return;
+	if (deathAnim.isDone()) return true;
 	setTexture(deathAnim.getTexture());
 	setTextureRect(deathAnim.next());
+	return false;
 }
 
 void Pacman::teleport(int newX)
@@ -19,10 +20,21 @@ void Pacman::teleport(int newX)
 std::pair<sf::Vector2i, sf::Vector2i> Pacman::getMovement() const { return std::make_pair(gridPosition, direction); }
 sf::FloatRect Pacman::getGlobalBounds() const { return sf::Sprite::getGlobalBounds(); }
 
+void Pacman::reset()
+{
+	nextTurn = EAST;
+	gridPosition = initialGridPos;
+	setPosition(Config::ENTITY_SIZE * gridPosition.x, Config::ENTITY_SIZE * gridPosition.y);
+	setTexture(movAnim.getTexture());
+	deathAnim.reset();
+}
+
 void Pacman::changeDirection(const sf::Vector2i& nxtTurn) { nextTurn = nxtTurn; }
 
 void Pacman::move()
 {
+	if (level->gameOver()) return;
+
 	// Pacman can turn without hitting a wall or the ghost house gates, so change its direction
 	if (!level->isInaccessible(gridPosition + nextTurn)) direction = nextTurn;
 

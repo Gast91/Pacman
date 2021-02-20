@@ -1,6 +1,7 @@
 #pragma once
 #include "Config.h"
 
+// much overlap here, can def be improved
 class GhostObserver
 {
 public:
@@ -11,15 +12,18 @@ public:
     virtual bool isNearHome() const = 0;
     virtual sf::Vector2i getCoords() const = 0;
     virtual sf::FloatRect getGlobalBounds() const = 0;
+    virtual void reset() = 0;
 };
 
 class PacmanObserver
 {
 public:
     virtual ~PacmanObserver() = default;
+    virtual bool playDeath() = 0;
     virtual void teleport(int newX) = 0;
     virtual std::pair<sf::Vector2i, sf::Vector2i> getMovement() const = 0;
     virtual sf::FloatRect getGlobalBounds() const = 0;
+    virtual void reset() = 0;
 };
 
 class Subject
