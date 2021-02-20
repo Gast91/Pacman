@@ -18,8 +18,9 @@ namespace Config
   //-----------------------------------------------------------------
   //--------------------GAME WINDOW SIZE-----------------------------
   //-----------------------------------------------------------------
-    constexpr float WIDTH  = 448 * SCALE;
-    constexpr float HEIGHT = 496 * SCALE;
+    constexpr unsigned int BANNER_HEIGHT = static_cast<unsigned int>(16 * SCALE);
+    constexpr unsigned int WIDTH         = static_cast<unsigned int>(448 * SCALE);
+    constexpr unsigned int HEIGHT        = static_cast<unsigned int>(496 * SCALE + BANNER_HEIGHT);
   //-----------------------------------------------------------------
   //--------------------GAME ENTITIES SIZES--------------------------
   //-----------------------------------------------------------------
@@ -53,6 +54,7 @@ namespace Config
         constexpr const char* inky     = "resources/sprites/inky_spritesheet.png";
         constexpr const char* clyde    = "resources/sprites/clyde_spritesheet.png";
         constexpr const char* hunted   = "resources/sprites/ghost_spritesheet.png";
+        constexpr const char* lives    = "resources/sprites/lives_counter.png";
     }
 
     const std::map <std::pair<int, int>, unsigned int> offsetDict = { {{ EAST.x,  EAST.y }, 0 }, {{ WEST.x,  WEST.y }, 2 },
@@ -66,6 +68,15 @@ namespace Util
         auto texture = std::make_unique<sf::Texture>();
         if (texture->loadFromFile(path)) return std::move(texture);
         throw std::exception("Cannot find texture");
+    };
+
+    auto createSprite = [](const sf::Texture& text, sf::Vector2f pos = { 0.0f, 0.0f })
+    {
+        std::unique_ptr<sf::Sprite> sprite;
+        sprite = std::make_unique<sf::Sprite>(text);
+        sprite->scale(Config::SCALE, Config::SCALE);
+        sprite->setPosition(pos);
+        return std::move(sprite);
     };
 
     inline sf::Vector2i clampToGrid(const sf::Vector2i coords)
@@ -92,12 +103,11 @@ namespace Util
 //       game 'pauses' for a sec when pacman eats a ghost and point text is shown (technically the dead ghost speed through to its home but whatevs)
 //       hunted anim 'flashes' only during the end of hunted period - otherwise it stays blue (do they swap back to hunting when they reach home or wait for hunted to end?)
 //       ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
-//       inky (and another) very rarely gets in the ghost house without being frightened   
-//       Win / Loss / Multiple lives - (3 left looking pacmans, bottom left) - at (re)start one gets removed - when ready!text is shown
+//       inky (and another) very rarely gets in the ghost house without being frightened
 //       70 dots and then 170 --> fruit (time limit?)
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 7. Text - Media:
 //       Score counter
-//       Lives counter
+//       Win / Loss / Ready! / Start etc Text
 //       Game sound
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

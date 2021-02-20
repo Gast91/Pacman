@@ -20,13 +20,8 @@ Level::Level() :
         return grid; 
     }()),
     bgTexture(Util::loadTexture(Config::sprites::bckgnd)),
-    background([&]() {
-        std::unique_ptr<sf::Sprite> bgSprite;
-        bgSprite = std::make_unique<sf::Sprite>(*bgTexture);
-        bgSprite->scale(Config::SCALE, Config::SCALE);
-        return std::move(bgSprite); 
-    }()) 
-{ 
+    background(Util::createSprite(*bgTexture))
+{
     scatterChaseTimer.startTimer(); 
 }
 
@@ -74,16 +69,16 @@ void Level::restart()
 {
     pacmanObserver->reset();
     for (auto& observer : observers) observer->reset();  // the observers themselves will handle their state
-    for (auto& cols : tileGrid) { for (auto& tile : cols) tile->reset(); }
+    for (auto& cols : tileGrid) { for (auto& tile : cols) tile->reset(); }  // do they actually reset?? or only on total game reset?
     over = !over;
-    lives--;
+    --lives;
     dotsEaten = 0;
     scatterChaseTimer.startTimer();
 }
 
 void Level::update()
 {
-    if (over && pacmanObserver->playDeath() && lives > 0) restart();
+    if (over && pacmanObserver->playDeath() && lives.getLives() > 0) restart();
     else if (over) return;
 
     // Update pacman's position on the grid
@@ -140,4 +135,5 @@ void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	target.draw(*background);
     for (auto& col : tileGrid) { for (auto& tile : col) target.draw(*tile); }
+    target.draw(lives);
 }

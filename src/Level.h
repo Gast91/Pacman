@@ -5,6 +5,7 @@
 #include "Tile.h"
 #include "Timer.h"
 #include "IObserver.h"
+#include "Banner.h"
 
 using TileGrid = std::array<std::array<std::unique_ptr<Tile>, Config::COLS>, Config::ROWS>;
 
@@ -19,10 +20,10 @@ private:
     Timer scatterChaseTimer;
     Timer huntedTimer;
 
+    Lives lives;
     PacmanObserver* pacmanObserver;
 
     bool over = false;
-    unsigned int lives = 2;  // 3 total
     int dotsEaten = 0;
 
     bool shouldScatter() const;
