@@ -34,7 +34,12 @@ public:
         return *this;
     }
 
-    void restart() {}   /*TODO for restarting the whole game*/
+    void reset()
+    {
+        lives = 2;
+        livesSprite->setTextureRect({ 0, 0, Config::sprites::size * lives, Config::sprites::size });
+    }
+
     int getLives() const { return lives; }
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const { target.draw(*livesSprite); }
@@ -43,16 +48,23 @@ public:
 class ScoreDisplay : public sf::Drawable
 {
 private:
-    unsigned int score = 0;
+    int score = 0;
+    int threshold = Config::BONUS_LIFE;
     const std::unique_ptr<sf::Font> font;
     std::unique_ptr<sf::Text> scoreText;
 
     const std::unique_ptr<sf::Texture> ghostPointsTexture;
     std::unique_ptr<sf::Sprite> ghostPoints;
     int ghostPointsCounter = 200;
+    bool started = false;
     bool mutable showingGhostPoints = false;
 
-    void updateDisplay() { scoreText->setString(std::to_string(score)); }
+    void updateDisplay() 
+    {
+        scoreText->setString(started ? std::to_string(score) : Config::startMsg);
+        const float startXPos = static_cast<float>(Config::WIDTH) / 2.0f - scoreText->getLocalBounds().width / 2.0f;
+        scoreText->setPosition(startXPos, Config::HEIGHT - Config::BANNER_HEIGHT);
+    }
 public:
     ScoreDisplay() : font(Util::loadFont()), ghostPointsTexture(Util::loadTexture(Config::sprites::ghostP)), ghostPoints(Util::createSprite(*ghostPointsTexture))
     {
@@ -60,11 +72,12 @@ public:
         scoreText->setFont(*font);
         scoreText->setCharacterSize(Config::textCharSize);
         scoreText->setFillColor(sf::Color::Green);
-        scoreText->setPosition(Config::WIDTH / 2.0f, Config::HEIGHT - Config::BANNER_HEIGHT);
         updateDisplay();
     }
 
-    void reset() { score = 0; updateDisplay(); }
+    void reset()   { started = false; updateDisplay(); }
+    void restart() { score = 0; reset(); }
+    void start()   { started = true; updateDisplay(); }
 
     void displayGhostPoints(const sf::Vector2f& position)
     {
@@ -80,6 +93,16 @@ public:
         updateDisplay();
     }
 
+    bool overThreshold() 
+    { 
+        if (score >= threshold)
+        {
+            threshold += Config::BONUS_LIFE;
+            return true;
+        }
+        return false;
+    }
+
     void resetGhostPoints() { ghostPointsCounter = 200; }
 
     ScoreDisplay& operator+=(const int rhs)
@@ -88,8 +111,6 @@ public:
         updateDisplay();
         return *this;
     }
-
-    int operator%(const int rhs) { return score % rhs; }
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {

@@ -34,12 +34,13 @@ namespace Config
 
     constexpr const char* grid     = "resources/grid.txt";
     constexpr const char* fontFile = "resources/fonts/arial.ttf";
+    constexpr const char* startMsg = "Press 'Space' to start!";
 
     constexpr unsigned int textCharSize = static_cast<unsigned int>(12 * SCALE);
 
     constexpr int DOT_VALUE  = 10;
     constexpr int BDOT_VALUE = 50;
-    constexpr int TOTAL_DOTS = 244;
+    constexpr int TOTAL_DOTS = 246;   // isn't it supposed to be 244?
     constexpr int BONUS_LIFE = 10000; // bonus life every #
 
     namespace Keybinds
@@ -127,10 +128,8 @@ namespace Util
 //     - ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
 //     - inky (and another) very rarely gets in the ghost house without being frightened
 // Additions:
-//     - pacman starts as a ball until 'space' is pressed (press space text is shown?)
 //     - 70 dots and then 170 --> fruit (time limit?) - how often they appear in a level?
 //     - cherries(100pts - lvl1) | Strawb(300pts - lvl2) | Orange(500pts - lvl3,4) | Apple(700pts - lvl5,6) | Grape(1kpts - lvl7,8) | Ship(2kpts - lvl10)
-//       Bell(3kpts - lvl11,12) | Key(5kpts - lvl13+) - score size is 16 for up to 700pts, size 20 for rest..   
-//     - Win / Loss / Ready! / Start etc Text - figure where to place it
+//       Bell(3kpts - lvl11,12) | Key(5kpts - lvl13+) - score size is 16 for up to 700pts, size 20 for rest..
 //     - Game sound
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

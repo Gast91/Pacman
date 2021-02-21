@@ -25,13 +25,15 @@ private:
     Collectible collectible;
     PacmanObserver* pacmanObserver;
 
-    bool over = false;
-    bool paused = false;
+    bool over   = false;  // pacman died (might have lives remaining)
+    bool paused = false;  // pacman ate a ghost, game paused to display pts
+    bool start  = false;  // game waiting for user input to start
     int dotsEaten = 0;
 
     bool shouldScatter() const;
-    void nextLevel();
-    void reset();
+    void nextLevel();   // Reset game and increase level
+    void reset();       // Reset level - pacman died
+    void restart();     // Restart the whole game
 public:
     Level();
 
@@ -42,11 +44,13 @@ public:
     bool isInaccessible(const sf::Vector2i coords) const;
     bool isIntersection(const sf::Vector2i coords) const;
 
-    bool gameOver() const;
-    bool isPaused() const;
-    int  getEaten() const;
+    bool gameOver()   const;
+    bool isPaused()   const;
+    bool hasStarted() const;
+    int  getEaten()   const;
 
     void update();
+    void begin();
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 };

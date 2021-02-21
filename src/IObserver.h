@@ -23,6 +23,7 @@ public:
     virtual void teleport(int newX) = 0;
     virtual std::pair<sf::Vector2i, sf::Vector2i> getMovement() const = 0;
     virtual sf::FloatRect getGlobalBounds() const = 0;
+    virtual void start() = 0;
     virtual void reset() = 0;
 };
 

@@ -44,7 +44,8 @@ public:
 
     virtual void updateState(GhostState gs) override
     {
-        if ((state == GhostState::Waiting && aStar->canExit(30)) || state != GhostState::Waiting) state = gs;
+        if ((state == GhostState::Waiting && aStar->canExit(30)) || (state != GhostState::Waiting && state != GhostState::Paused)) state = gs;
+        else if (state == GhostState::Paused) state = GhostState::Waiting;
     }
     virtual void reset() override { Ghost::reset(); state = GhostState::Waiting; }
 };
@@ -70,7 +71,8 @@ public:
 
     virtual void updateState(GhostState gs) override
     {
-        if ((state == GhostState::Waiting && aStar->canExit(80)) || state != GhostState::Waiting) state = gs;
+        if ((state == GhostState::Waiting && aStar->canExit(80)) || (state != GhostState::Waiting && state != GhostState::Paused)) state = gs;
+        else if (state == GhostState::Paused) state = GhostState::Waiting;
     }
     virtual void reset() override { Ghost::reset(); state = GhostState::Waiting; }
 };

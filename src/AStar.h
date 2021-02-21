@@ -16,5 +16,6 @@ public:
     bool isWall(const sf::Vector2i coords) const;
     bool isIntersection(const sf::Vector2i coords) const;
     bool canExit(int eatLimit) const;
+    bool canBegin() const;
     void getPath(std::deque<std::unique_ptr<Node>>& path, const sf::Vector2i& startPos, const sf::Vector2i& endPos, const sf::Vector2i& currentDir) const;
 };

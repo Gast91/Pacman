@@ -6,6 +6,7 @@ Ghost::Ghost(const char* spritesheet, const AStar* astar, sf::Vector2i gridPos, 
     huntedAnim.setTexture(Config::sprites::hunted);
     velocity *= 0.5f;
     pathLines.setPrimitiveType(sf::LineStrip);
+    updateAnimation(EAST);
 }
 
 void Ghost::updateAnimation(const sf::Vector2i& direction)
@@ -52,7 +53,7 @@ void Ghost::changeDirection(const sf::Vector2i& target)
 
 void Ghost::move()
 {
-    if (state == GhostState::Waiting || state == GhostState::Paused) return;
+    if (state == GhostState::Waiting || state == GhostState::Paused || !aStar->canBegin()) return;
     if (inBetween)
     {
         sf::Sprite::move(direction.x * velocity, direction.y * velocity);

@@ -1,7 +1,12 @@
 #include "Pacman.h"
 
 Pacman::Pacman(const Level* lvl, sf::Vector2i gridPos)
-    : Entity(Config::sprites::pacman, gridPos), level(lvl) { deathAnim.setTexture(Config::sprites::pacDeath); }
+    : Entity(Config::sprites::pacman, gridPos), level(lvl) 
+{ 
+    deathAnim.setTexture(Config::sprites::pacDeath);
+    setTexture(deathAnim.getTexture());
+    setTextureRect(deathAnim.getFirst());
+}
 
 bool Pacman::playDeath()
 {
@@ -25,15 +30,19 @@ void Pacman::reset()
     nextTurn = EAST;
     gridPosition = initialGridPos;
     setPosition(Config::ENTITY_SIZE * gridPosition.x, Config::ENTITY_SIZE * gridPosition.y);
-    setTexture(movAnim.getTexture());
+    /*setTexture(movAnim.getTexture());*/
+    setTexture(deathAnim.getTexture());
+    setTextureRect(deathAnim.getFirst());
     deathAnim.reset();
 }
+
+void Pacman::start() { setTexture(movAnim.getTexture()); }
 
 void Pacman::changeDirection(const sf::Vector2i& nxtTurn) { nextTurn = nxtTurn; }
 
 void Pacman::move()
 {
-    if (level->gameOver()) return;
+    if (level->gameOver() || level->isPaused() || !level->hasStarted()) return;
 
     // Pacman can turn without hitting a wall or the ghost house gates, so change its direction
     if (!level->isInaccessible(gridPosition + nextTurn)) direction = nextTurn;

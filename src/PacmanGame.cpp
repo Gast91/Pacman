@@ -52,16 +52,19 @@ int main()
                 case Config::Keybinds::RIGHT:
                     pacman->changeDirection(EAST);
                     break;
-                case Config::Keybinds::START: // OR RESTART?
+                case Config::Keybinds::START:
+                    if (!level->hasStarted()) level->begin();
                     break;
                 }
                 break;
             default: break;
             }
         }
+
         pacman->move();
         level->update();
-        if (!level->isPaused()) for (auto& ghost : ghosts) ghost->move();
+        for (auto& ghost : ghosts) ghost->move();
+
         window.clear();
         window.draw(*level);
         window.draw(*pacman);

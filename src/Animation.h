@@ -91,4 +91,5 @@ public:
     }
     void reset() { progress = 0; done = false; }
     bool isDone() const { return done; }
+    const sf::IntRect& getFirst() const { return Animation<animNo>::anims.front(); }
 };

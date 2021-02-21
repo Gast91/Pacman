@@ -20,10 +20,8 @@ Level::Level() :
         return grid; 
     }()),
     bgTexture(Util::loadTexture(Config::sprites::bckgnd)),
-    background(Util::createSprite(*bgTexture))
-{
-    scatterChaseTimer.startTimer();
-}
+        background(Util::createSprite(*bgTexture))
+{}
 
 void Level::registerPacman(PacmanObserver* pacObs) { pacmanObserver = pacObs; }
 
@@ -52,8 +50,9 @@ bool Level::isIntersection(const sf::Vector2i coords) const
     return tileGrid[coords.x][coords.y]->intersection;
 }
 
-bool Level::gameOver() const { return over; }
-bool Level::isPaused() const { return paused; }
+bool Level::gameOver()   const { return over; }
+bool Level::isPaused()   const { return paused; }
+bool Level::hasStarted() const { return start; }
 
 bool Level::shouldScatter() const
 {
@@ -70,28 +69,51 @@ bool Level::shouldScatter() const
 void Level::nextLevel()
 {
     pacmanObserver->reset();
-    for (auto& observer : observers) observer->reset();  // the observers themselves will handle their state
+    for (auto& observer : observers) observer->reset();
+    for (auto& cols : tileGrid) { for (auto& tile : cols) tile->reset(); }
+    score.reset(); // just the display not the score itself
     dotsEaten = 0;
     ++collectible;
-    // WE ALSO NEED TO WAIT FOR START
-    scatterChaseTimer.startTimer(); // after start is made
+    start = false;
 }
 
 void Level::reset()
 {
     pacmanObserver->reset();
-    for (auto& observer : observers) observer->reset();  // the observers themselves will handle their state
-    //for (auto& cols : tileGrid) { for (auto& tile : cols) tile->reset(); }  // do they actually reset?? or only on total game reset?
-    over = !over;
+    for (auto& observer : observers) observer->reset();
+    score.reset(); // just the display not the score itself
+    over = false;
     --lives;
-    //dotsEaten = 0;
-    //scatterChaseTimer.startTimer();
+    start = false;
+}
+
+void Level::restart()
+{
+    pacmanObserver->reset();
+    for (auto& observer : observers) observer->reset();
+    for (auto& cols : tileGrid) { for (auto& tile : cols) tile->reset(); }
+    over = false;
+    lives.reset();
+    score.restart();
+    dotsEaten = 0;
+    start = false;
+}
+
+void Level::begin()
+{
+    start = true;
+    over = false;
+    pacmanObserver->start();
+    score.start();
+    scatterChaseTimer.startTimer();
 }
 
 void Level::update()
 {
+    if (!start) return;
     if (paused) { paused = false; huntedTimer.resumeTimer(); }
     if (over && pacmanObserver->playDeath() && lives.getLives() > 0) reset();
+    else if (over && pacmanObserver->playDeath() && lives.getLives() == 0) restart();
     else if (over) return;
 
     // If pacman ate all the dots, we go to the next level
@@ -114,7 +136,7 @@ void Level::update()
         ++dotsEaten;
         score += tileGrid[pacmanCoords.x][pacmanCoords.y]->getValue();
         // Pacman 'earns' a life every 10k points
-        if (score % Config::BONUS_LIFE == 0) ++lives;
+        if (score.overThreshold()) ++lives;
     }
 
     // Check if frightened timer expired, notify ghosts and resume scatter/chase timer
@@ -140,6 +162,8 @@ void Level::update()
         { 
             observer->updateState(GhostState::Dead); 
             score.displayGhostPoints(Util::coordsToPosition(observer->getCoords()));
+            // Pacman 'earns' a life every 10k points
+            if (score.overThreshold()) ++lives;
             paused = true;
             huntedTimer.pauseTimer();
         }
