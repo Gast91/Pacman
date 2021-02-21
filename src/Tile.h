@@ -34,6 +34,7 @@ public:
     Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node* p = nullptr);
 
     bool hasADot() const;
+    int  getValue() const;
     void setEaten();
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const;

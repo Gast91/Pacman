@@ -37,6 +37,11 @@ namespace Config
 
     constexpr unsigned int textCharSize = static_cast<unsigned int>(12 * SCALE);
 
+    constexpr int DOT_VALUE  = 10;
+    constexpr int BDOT_VALUE = 50;
+    constexpr int TOTAL_DOTS = 244;
+    constexpr int BONUS_LIFE = 10000; // bonus life every #
+
     namespace Keybinds
     {
         constexpr sf::Keyboard::Key UP    = sf::Keyboard::Key::W;
@@ -61,6 +66,8 @@ namespace Config
         constexpr const char* hunted   = "resources/sprites/ghost_spritesheet.png";
         constexpr const char* lives    = "resources/sprites/lives_counter.png";
         constexpr const char* ghostP   = "resources/sprites/ghost_points.png";
+        constexpr const char* collectP = "resources/sprites/collectible_points.png";
+        constexpr const char* collect  = "resources/sprites/collectibles.png";
     }
 
     const std::map <std::pair<int, int>, unsigned int> offsetDict = { {{ EAST.x,  EAST.y }, 0 }, {{ WEST.x,  WEST.y }, 2 },
@@ -115,15 +122,15 @@ namespace Util
 //     - sf::deltaV for movement - slow down pacman as well
 //     - sf::clock for timers rather than mine
 //     - collision improvements and general speed improvements - needed for new lvls also
-//     - game 'pauses' for a sec when pacman eats a ghost and point text is shown (technically the dead ghost speed through to its home but whatevs)
+//     - technically the eaten ghost speeds through to its home instead of being paused like the rest but whatevs
 //     - hunted anim 'flashes' only during the end of hunted period - otherwise it stays blue (do they swap back to hunting when they reach home or wait for hunted to end?)
 //     - ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
 //     - inky (and another) very rarely gets in the ghost house without being frightened
 // Additions:
 //     - pacman starts as a ball until 'space' is pressed (press space text is shown?)
-//     - 70 dots and then 170 --> fruit (time limit?) - how often they appear in a level? banner displays the fruits at this stage (previous lvl fruits + current)
+//     - 70 dots and then 170 --> fruit (time limit?) - how often they appear in a level?
 //     - cherries(100pts - lvl1) | Strawb(300pts - lvl2) | Orange(500pts - lvl3,4) | Apple(700pts - lvl5,6) | Grape(1kpts - lvl7,8) | Ship(2kpts - lvl10)
-//       Bell(3kpts - lvl11,12) | Key(5kpts - lvl13+)
+//       Bell(3kpts - lvl11,12) | Key(5kpts - lvl13+) - score size is 16 for up to 700pts, size 20 for rest..   
 //     - Win / Loss / Ready! / Start etc Text - figure where to place it
 //     - Game sound
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

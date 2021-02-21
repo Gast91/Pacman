@@ -66,6 +66,17 @@ bool Level::shouldScatter() const
     else return false;
 }
 
+// this at some point should also modify speeds and other variables that are based on level
+void Level::nextLevel()
+{
+    pacmanObserver->reset();
+    for (auto& observer : observers) observer->reset();  // the observers themselves will handle their state
+    dotsEaten = 0;
+    ++collectible;
+    // WE ALSO NEED TO WAIT FOR START
+    scatterChaseTimer.startTimer(); // after start is made
+}
+
 void Level::reset()
 {
     pacmanObserver->reset();
@@ -83,6 +94,9 @@ void Level::update()
     if (over && pacmanObserver->playDeath() && lives.getLives() > 0) reset();
     else if (over) return;
 
+    // If pacman ate all the dots, we go to the next level
+    if (dotsEaten == Config::TOTAL_DOTS) { nextLevel(); return; }  // what is the maximum level that pacman wins??
+
     // Update pacman's position on the grid
     const auto pacmanCoords = pacmanObserver->getMovement().first;
     // If pacman should teleport, notify and provide new grid position (currently only for X)
@@ -98,8 +112,9 @@ void Level::update()
         }
         tileGrid[pacmanCoords.x][pacmanCoords.y]->setEaten();
         ++dotsEaten;
-        // Pacman 'earns' a life every 10k points - score increment is equivalent to score += 10 (each dot is 10 points not 1)
-        if (++score % 10000 == 0) ++lives;
+        score += tileGrid[pacmanCoords.x][pacmanCoords.y]->getValue();
+        // Pacman 'earns' a life every 10k points
+        if (score % Config::BONUS_LIFE == 0) ++lives;
     }
 
     // Check if frightened timer expired, notify ghosts and resume scatter/chase timer
@@ -148,4 +163,5 @@ void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
     for (auto& col : tileGrid) { for (auto& tile : col) target.draw(*tile); }
     target.draw(lives);
     target.draw(score);
+    target.draw(collectible);
 }

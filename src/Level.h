@@ -22,6 +22,7 @@ private:
 
     ScoreDisplay score;
     Lives lives;
+    Collectible collectible;
     PacmanObserver* pacmanObserver;
 
     bool over = false;
@@ -29,6 +30,7 @@ private:
     int dotsEaten = 0;
 
     bool shouldScatter() const;
+    void nextLevel();
     void reset();
 public:
     Level();

@@ -82,22 +82,54 @@ public:
 
     void resetGhostPoints() { ghostPointsCounter = 200; }
 
-    ScoreDisplay& operator++()
+    ScoreDisplay& operator+=(const int rhs)
     {
-        score += 10;    /*kinda meh*/
+        score += rhs;
         updateDisplay();
         return *this;
     }
 
     int operator%(const int rhs) { return score % rhs; }
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const 
-    { 
-        target.draw(*scoreText); 
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        target.draw(*scoreText);
         if (showingGhostPoints)
         {
             target.draw(*ghostPoints);
             showingGhostPoints = false;
         }
     }
+};
+
+class Collectible : public sf::Drawable
+{
+private:
+    int level = 1;
+    const std::unique_ptr<sf::Texture> collectTexture;
+    std::unique_ptr<sf::Sprite> collectSprite;
+public:
+    Collectible() 
+        : collectTexture(Util::loadTexture(Config::sprites::collect)), 
+          collectSprite(Util::createSprite(*collectTexture, { Config::WIDTH, Config::HEIGHT - Config::BANNER_HEIGHT }))
+    {
+        // This sprite is drawn from top right since it 'grows' leftward
+        collectSprite->setTextureRect({ (12 - level) * Config::sprites::size, 0, Config::sprites::size * level, Config::sprites::size });
+        collectSprite->setOrigin({ static_cast<float>(Config::sprites::size * level), 0.0f });
+    }
+
+    // spawn collectible?
+    // collectible also has a score value
+
+    Collectible& operator++()
+    {
+        if (level >= 12) return *this;  // from level 12 onwards the collectible is the key (last/leftmost sprite)
+        ++level;
+        // This sprite is drawn from top right since it 'grows' leftward
+        collectSprite->setTextureRect({ (12 - level) * Config::sprites::size, 0, Config::sprites::size * level, Config::sprites::size });
+        collectSprite->setOrigin({ static_cast<float>(Config::sprites::size * level), 0.0f });
+        return *this;
+    }
+
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const { target.draw(*collectSprite); }
 };

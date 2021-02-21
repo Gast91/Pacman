@@ -14,6 +14,8 @@ Tile::Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node* p) : type(
 
 bool Tile::hasADot() const { return (type == TileType::Dot || type == TileType::BigDot) && !eaten; }
 
+int  Tile::getValue() const { return type == TileType::Dot ? Config::DOT_VALUE : Config::BDOT_VALUE; }
+
 void Tile::setEaten() { eaten = true; }
 
 void Tile::reset() { if (type == TileType::Dot || type == TileType::BigDot) eaten = false; }
