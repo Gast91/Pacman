@@ -1,10 +1,11 @@
 #pragma once
+#include <thread>
 #include "Pacman.h"
 #include "GhostPersonas.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(Config::WIDTH, Config::HEIGHT), "Pacman", sf::Style::Close);  // DECIDE NUMBERS! JUST INTS?
+    sf::RenderWindow window(sf::VideoMode(Config::WIDTH, Config::HEIGHT), "Pacman", sf::Style::Close);
     window.setFramerateLimit(10); // less?
 
     // Instantiate level, pacman and all the ghosts
@@ -51,16 +52,16 @@ int main()
                 case Config::Keybinds::RIGHT:
                     pacman->changeDirection(EAST);
                     break;
+                case Config::Keybinds::START: // OR RESTART?
+                    break;
                 }
                 break;
             default: break;
             }
         }
-
         pacman->move();
         level->update();
-        for (auto& ghost : ghosts) ghost->move();
-
+        if (!level->isPaused()) for (auto& ghost : ghosts) ghost->move();
         window.clear();
         window.draw(*level);
         window.draw(*pacman);
@@ -74,6 +75,7 @@ int main()
             }
         }
         window.display();
+        if (level->isPaused()) std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
     //_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF);
     return 0;

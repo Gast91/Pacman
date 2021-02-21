@@ -47,9 +47,14 @@ private:
     const std::unique_ptr<sf::Font> font;
     std::unique_ptr<sf::Text> scoreText;
 
+    const std::unique_ptr<sf::Texture> ghostPointsTexture;
+    std::unique_ptr<sf::Sprite> ghostPoints;
+    int ghostPointsCounter = 200;
+    bool mutable showingGhostPoints = false;
+
     void updateDisplay() { scoreText->setString(std::to_string(score)); }
 public:
-    ScoreDisplay() : font(Util::loadFont())
+    ScoreDisplay() : font(Util::loadFont()), ghostPointsTexture(Util::loadTexture(Config::sprites::ghostP)), ghostPoints(Util::createSprite(*ghostPointsTexture))
     {
         scoreText = std::make_unique<sf::Text>();
         scoreText->setFont(*font);
@@ -61,6 +66,22 @@ public:
 
     void reset() { score = 0; updateDisplay(); }
 
+    void displayGhostPoints(const sf::Vector2f& position)
+    {
+        int textureX = (ghostPointsCounter / 400) * Config::sprites::size;
+        if (textureX == 64) textureX -= Config::sprites::size;
+
+        ghostPoints->setTextureRect({ textureX, 0, Config::sprites::size, Config::sprites::size });
+        ghostPoints->setPosition(position.x - Config::SPRITE_TEXT_OFFSET, position.y - Config::SPRITE_TEXT_OFFSET);
+        score += ghostPointsCounter;
+        showingGhostPoints = true;
+        ghostPointsCounter *= 2;
+
+        updateDisplay();
+    }
+
+    void resetGhostPoints() { ghostPointsCounter = 200; }
+
     ScoreDisplay& operator++()
     {
         score += 10;    /*kinda meh*/
@@ -70,5 +91,13 @@ public:
 
     int operator%(const int rhs) { return score % rhs; }
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const { target.draw(*scoreText); }
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const 
+    { 
+        target.draw(*scoreText); 
+        if (showingGhostPoints)
+        {
+            target.draw(*ghostPoints);
+            showingGhostPoints = false;
+        }
+    }
 };

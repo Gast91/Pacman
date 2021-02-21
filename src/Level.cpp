@@ -22,7 +22,7 @@ Level::Level() :
     bgTexture(Util::loadTexture(Config::sprites::bckgnd)),
     background(Util::createSprite(*bgTexture))
 {
-    scatterChaseTimer.startTimer(); 
+    scatterChaseTimer.startTimer();
 }
 
 void Level::registerPacman(PacmanObserver* pacObs) { pacmanObserver = pacObs; }
@@ -53,6 +53,7 @@ bool Level::isIntersection(const sf::Vector2i coords) const
 }
 
 bool Level::gameOver() const { return over; }
+bool Level::isPaused() const { return paused; }
 
 bool Level::shouldScatter() const
 {
@@ -78,6 +79,7 @@ void Level::reset()
 
 void Level::update()
 {
+    if (paused) { paused = false; huntedTimer.resumeTimer(); }
     if (over && pacmanObserver->playDeath() && lives.getLives() > 0) reset();
     else if (over) return;
 
@@ -106,6 +108,7 @@ void Level::update()
         huntedTimer.stopTimer();
         scatterChaseTimer.resumeTimer();
         notifyObservers(shouldScatter() ? GhostState::Scatter : GhostState::Chase);
+        score.resetGhostPoints();
     }
     else if (!huntedTimer.isRunning()) notifyObservers(shouldScatter() ? GhostState::Scatter : GhostState::Chase);
 
@@ -118,7 +121,13 @@ void Level::update()
         bool colliding = observer->getGlobalBounds().intersects(pacmanObserver->getGlobalBounds());
 
         // Pacman ate this ghost
-        if (obsState == GhostState::Frightened && colliding) observer->updateState(GhostState::Dead);
+        if (obsState == GhostState::Frightened && colliding) 
+        { 
+            observer->updateState(GhostState::Dead); 
+            score.displayGhostPoints(Util::coordsToPosition(observer->getCoords()));
+            paused = true;
+            huntedTimer.pauseTimer();
+        }
         // This ghost came back to life
         else if (obsState == GhostState::Dead && observer->isNearHome()) observer->updateState(huntedTimer.isRunning() ? GhostState::Frightened : GhostState::Scatter);
         // This ghost ate pacman

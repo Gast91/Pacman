@@ -24,10 +24,11 @@ namespace Config
   //-----------------------------------------------------------------
   //--------------------GAME ENTITIES SIZES--------------------------
   //-----------------------------------------------------------------
-    constexpr float ENTITY_SIZE   = 16.0f * SCALE;
-    constexpr float SCALED_OFFSET = ENTITY_SIZE / ( 3 * SCALE );
-    constexpr float DOT_SIZE      = 2.5f  * SCALE;
-    constexpr float B_DOT_SIZE    = 5.0f  * SCALE;
+    constexpr float ENTITY_SIZE        = 16.0f * SCALE;
+    constexpr float SCALED_OFFSET      = ENTITY_SIZE / ( 3 * SCALE );
+    constexpr float DOT_SIZE           = 2.5f  * SCALE;
+    constexpr float B_DOT_SIZE         = 5.0f  * SCALE;
+    constexpr float SPRITE_TEXT_OFFSET = 20.0f * SCALE;
   //-----------------------------------------------------------------
     constexpr int ROWS = 28, COLS = 31;
 
@@ -43,6 +44,7 @@ namespace Config
         constexpr sf::Keyboard::Key LEFT  = sf::Keyboard::Key::A;
         constexpr sf::Keyboard::Key RIGHT = sf::Keyboard::Key::D;
         constexpr sf::Keyboard::Key ESC   = sf::Keyboard::Key::Escape;
+        constexpr sf::Keyboard::Key START = sf::Keyboard::Key::Space;
     }
 
     namespace sprites
@@ -58,6 +60,7 @@ namespace Config
         constexpr const char* clyde    = "resources/sprites/clyde_spritesheet.png";
         constexpr const char* hunted   = "resources/sprites/ghost_spritesheet.png";
         constexpr const char* lives    = "resources/sprites/lives_counter.png";
+        constexpr const char* ghostP   = "resources/sprites/ghost_points.png";
     }
 
     const std::map <std::pair<int, int>, unsigned int> offsetDict = { {{ EAST.x,  EAST.y }, 0 }, {{ WEST.x,  WEST.y }, 2 },
@@ -118,7 +121,6 @@ namespace Util
 //     - inky (and another) very rarely gets in the ghost house without being frightened
 // Additions:
 //     - pacman starts as a ball until 'space' is pressed (press space text is shown?)
-//     - In each freightened cycle ghosts give points (1st -> 200, 2nd -> 4, 3rd -> 800, 4th -> 1600, resets when cycle ends or all ghosts eaten)
 //     - 70 dots and then 170 --> fruit (time limit?) - how often they appear in a level? banner displays the fruits at this stage (previous lvl fruits + current)
 //     - cherries(100pts - lvl1) | Strawb(300pts - lvl2) | Orange(500pts - lvl3,4) | Apple(700pts - lvl5,6) | Grape(1kpts - lvl7,8) | Ship(2kpts - lvl10)
 //       Bell(3kpts - lvl11,12) | Key(5kpts - lvl13+)
