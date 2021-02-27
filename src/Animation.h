@@ -14,7 +14,7 @@ public:
     virtual inline unsigned int nextPos() { return ++currentAnim %= animNo; }
     virtual sf::IntRect& next(const sf::Vector2i direction = {0, 0}) { return anims[nextPos()]; }
     const sf::Texture& getTexture() const { return *spriteSheet; }
-    void setTexture(const char* texture) { spriteSheet = Util::loadTexture(texture); }
+    void setTexture(const char* texture) { spriteSheet = Util::loadTextureTrans(texture); }
 };
 
 template <unsigned int animNo, unsigned int perMove>

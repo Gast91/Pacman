@@ -43,6 +43,8 @@ namespace Config
     constexpr int TOTAL_DOTS = 246;   // isn't it supposed to be 244?
     constexpr int BONUS_LIFE = 10000; // bonus life every #
 
+    const sf::Vector2i FRUIT_COORDS = { 13, 17 };
+
     namespace Keybinds
     {
         constexpr sf::Keyboard::Key UP    = sf::Keyboard::Key::W;
@@ -73,6 +75,9 @@ namespace Config
 
     const std::map <std::pair<int, int>, unsigned int> offsetDict = { {{ EAST.x,  EAST.y }, 0 }, {{ WEST.x,  WEST.y }, 2 },
                                                                       {{ NORTH.x, NORTH.y}, 4 }, {{ SOUTH.x, SOUTH.y}, 6 }};
+
+    const std::map<int, int> collectiblePoints = { {1, 100}, {2, 300}, {3, 500}, {4, 500}, {5, 700}, {6, 700}, {7, 1000},
+                                                   {8, 1000}, {9, 2000}, {10, 2000}, {11, 3000}, {12, 3000}, {13, 5000} };
 }
 
 namespace Util
@@ -82,6 +87,17 @@ namespace Util
         auto texture = std::make_unique<sf::Texture>();
         if (texture->loadFromFile(path)) return std::move(texture);
         throw std::exception("Cannot find texture");
+    };
+
+    // Transparent texture loading - black color mask
+    auto loadTextureTrans = [](const char* path)
+    {
+        sf::Image img;
+        if (!img.loadFromFile(path)) throw std::exception("Cannot find texture");
+        img.createMaskFromColor(sf::Color::Black);
+        auto texture = std::make_unique<sf::Texture>();
+        texture->loadFromImage(img);
+        return std::move(texture);
     };
 
     auto loadFont = []()
@@ -121,7 +137,6 @@ namespace Util
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Issues:
 //     - sf::deltaV for movement - slow down pacman as well
-//     - sf::clock for timers rather than mine
 //     - collision improvements and general speed improvements - needed for new lvls also
 //     - technically the eaten ghost speeds through to its home instead of being paused like the rest but whatevs
 //     - hunted anim 'flashes' only during the end of hunted period - otherwise it stays blue (do they swap back to hunting when they reach home or wait for hunted to end?)
