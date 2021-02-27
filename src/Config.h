@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include "SFML/Graphics.hpp"
+#include "SFML/Audio.hpp"
 
 const sf::Vector2i NORTH   { 0, -1};
 const sf::Vector2i SOUTH   { 0,  1};
@@ -77,12 +78,14 @@ namespace Config
 
     namespace sounds
     {
-        constexpr const char* chomp = "resources/sounds/pacman_chomp.wav";
-        constexpr const char* death = "resources/sounds/pacman_death.wav";
-        constexpr const char* fruit = "resources/sounds/pacman_eat_fruit.wav";
-        constexpr const char* ghost = "resources/sounds/pacman_eat_ghost.wav";
-        constexpr const char* life  = "resources/sounds/pacman_extra_life.wav";
-        constexpr const char* intro = "resources/sounds/pacman_intro.wav";
+        constexpr float volumePreset = 20.0f;
+        constexpr const char* soundPaths[6] = {
+            "resources/sounds/pacman_chomp.wav",
+            "resources/sounds/pacman_eat_fruit.wav",
+            "resources/sounds/pacman_eat_ghost.wav",
+            "resources/sounds/pacman_extra_life.wav",
+            "resources/sounds/pacman_death.wav",
+            "resources/sounds/pacman_intro.wav" };
     }
 
     const std::map <std::pair<int, int>, unsigned int> offsetDict = { {{ EAST.x,  EAST.y }, 0 }, {{ WEST.x,  WEST.y }, 2 },
@@ -141,6 +144,21 @@ namespace Util
         return std::move(sprite);
     };
 
+    auto loadSoundBuffer = [](const char* path)
+    {
+        auto buffer = std::make_unique<sf::SoundBuffer>();
+        if (buffer->loadFromFile(path)) return std::move(buffer);
+        throw std::exception("Cannot find sound");
+    };
+
+    auto createSound = [](const sf::SoundBuffer& buffer, const float volPreset = Config::sounds::volumePreset)
+    {
+        std::unique_ptr<sf::Sound> sound;
+        sound = std::make_unique<sf::Sound>(buffer);
+        sound->setVolume(volPreset);
+        return std::move(sound);
+    };
+
     inline sf::Vector2i clampToGrid(const sf::Vector2i coords)
     {
         return { (coords.x < 1) ? 1 : (Config::ROWS - 1 < coords.x) ? Config::ROWS - 1 : coords.x,
@@ -167,6 +185,7 @@ namespace Util
 //     - ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
 //     - inky (and another) very rarely gets in the ghost house without being frightened
 //     - pause(), resume() and the Timers need work for correct detection of which was running before pause
+//     - if game ends, or next level while in hunted mode, ghosts textures are messed up before starting to move
 // Additions:
-//     - Game sound
+//     - Mute functionality via M keybind, clicable sound icon that mutes etc, +- for increasing sound and move it (along with score) to a banner up top?
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

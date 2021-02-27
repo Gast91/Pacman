@@ -1,12 +1,10 @@
 #pragma once
-#include <array>      // this is part of SoundManager
 #include <fstream>
-
 #include "Tile.h"
 #include "Timer.h"
 #include "IObserver.h"
 #include "Banner.h"
-//#include "SoundManager.h"
+#include "SoundManager.h"
 
 using TileGrid = std::array<std::array<std::unique_ptr<Tile>, Config::COLS>, Config::ROWS>;
 
@@ -22,6 +20,7 @@ private:
     Timer huntedTimer;
 
     ScoreDisplay score;
+    SoundManager soundManager;
     Lives lives;
     Collectible collectible;
     PacmanObserver* pacmanObserver;

@@ -20,7 +20,7 @@ Level::Level() :
         return grid; 
     }()),
     bgTexture(Util::loadTexture(Config::sprites::bckgnd)),
-        background(Util::createSprite(*bgTexture))
+    background(Util::createSprite(*bgTexture))
 {}
 
 void Level::registerPacman(PacmanObserver* pacObs) { pacmanObserver = pacObs; }
@@ -109,17 +109,18 @@ void Level::begin()
     over = false;
     pacmanObserver->start();
     score.start();
+    soundManager.play(SoundManager::Sound::Intro);
     scatterChaseTimer.startTimer();
 }
 
-void Level::pause()  // these timers probably have issues
+void Level::pause()  // these timers have issues
 {
     paused = true;
     if (scatterChaseTimer.isRunning()) scatterChaseTimer.pauseTimer();
     if (huntedTimer.isRunning())       huntedTimer.pauseTimer();
 }
 
-void Level::resume()  // these timers probably have issues
+void Level::resume()  // these timers have issues
 {
     paused = false;
     if (scatterChaseTimer.isPaused()) scatterChaseTimer.resumeTimer();
@@ -154,7 +155,12 @@ void Level::update()
         ++dotsEaten;
         score += tileGrid[pacmanCoords.x][pacmanCoords.y]->getValue();
         // Pacman 'earns' a life every 10k points
-        if (score.overThreshold()) ++lives;
+        if (score.overThreshold())
+        {
+            ++lives;
+            soundManager.play(SoundManager::Sound::Extra_Life);
+        }
+        soundManager.play(SoundManager::Sound::Chomp);
     }
 
     // Check whether to spawn or consume a collectible
@@ -163,6 +169,7 @@ void Level::update()
         pause();
         collectible.setEaten(); 
         score.displayPoints(ScoreDisplay::Points::FRUIT_POINTS, Util::coordsToPosition(Config::FRUIT_COORDS));
+        soundManager.play(SoundManager::Sound::Eat_Fruit);
     }
     else if (dotsEaten == 70 || dotsEaten == 170)  collectible.spawnCollectible();
 
@@ -191,6 +198,7 @@ void Level::update()
             score.displayPoints(ScoreDisplay::Points::GHOST_POINTS, Util::coordsToPosition(observer->getCoords()));
             // Pacman 'earns' a life every 10k points
             if (score.overThreshold()) ++lives;
+            soundManager.play(SoundManager::Sound::Eat_Ghost);
             pause();
         }
         // This ghost came back to life
@@ -199,6 +207,7 @@ void Level::update()
         else if ((obsState == GhostState::Chase || obsState == GhostState::Scatter) && colliding)
         {
             over = true;
+            soundManager.play(SoundManager::Sound::Death);
             notifyObservers(GhostState::Paused);
         }
 
