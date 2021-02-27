@@ -71,7 +71,7 @@ void Level::nextLevel()
     pacmanObserver->reset();
     for (auto& observer : observers) observer->reset();
     for (auto& cols : tileGrid) { for (auto& tile : cols) tile->reset(); }
-    score.reset(); // just the display not the score itself
+    score.increaseLevel();
     dotsEaten = 0;
     ++collectible;
     start = false;
@@ -79,6 +79,8 @@ void Level::nextLevel()
 
 void Level::reset()
 {
+    // just hide it before resetting pacman to prevent eat on death since they both spawn in the same position
+    if (collectible.isVisible()) collectible.setEaten();
     pacmanObserver->reset();
     for (auto& observer : observers) observer->reset();
     score.reset(); // just the display not the score itself
@@ -89,6 +91,8 @@ void Level::reset()
 
 void Level::restart()
 {
+    // just hide it before resetting pacman to prevent eat on death since they both spawn in the same position
+    if (collectible.isVisible()) collectible.setEaten();
     pacmanObserver->reset();
     for (auto& observer : observers) observer->reset();
     for (auto& cols : tileGrid) { for (auto& tile : cols) tile->reset(); }
@@ -108,10 +112,24 @@ void Level::begin()
     scatterChaseTimer.startTimer();
 }
 
+void Level::pause()  // these timers probably have issues
+{
+    paused = true;
+    if (scatterChaseTimer.isRunning()) scatterChaseTimer.pauseTimer();
+    if (huntedTimer.isRunning())       huntedTimer.pauseTimer();
+}
+
+void Level::resume()  // these timers probably have issues
+{
+    paused = false;
+    if (scatterChaseTimer.isPaused()) scatterChaseTimer.resumeTimer();
+    if (huntedTimer.isPaused())       huntedTimer.resumeTimer();
+}
+
 void Level::update()
 {
     if (!start) return;
-    if (paused) { paused = false; huntedTimer.resumeTimer(); }  // resume timers that SHOULD BE RESUMED - PAUSE will happen for fruits also
+    if (paused) resume();
     if (over && pacmanObserver->playDeath() && lives.getLives() > 0) reset();
     else if (over && pacmanObserver->playDeath() && lives.getLives() == 0) restart();
     else if (over) return;
@@ -140,8 +158,13 @@ void Level::update()
     }
 
     // Check whether to spawn or consume a collectible
-    if (collectible.isVisible() && pacmanCoords == Config::FRUIT_COORDS) score += collectible.eat();
-    else if (dotsEaten == 70 || dotsEaten == 170)  collectible.spawnCollectible();  // paused = true; AND TIMERS! make a function that pauses timers that should be paused?
+    if (collectible.isVisible() && pacmanCoords == Config::FRUIT_COORDS) 
+    {
+        pause();
+        collectible.setEaten(); 
+        score.displayPoints(ScoreDisplay::Points::FRUIT_POINTS, Util::coordsToPosition(Config::FRUIT_COORDS));
+    }
+    else if (dotsEaten == 70 || dotsEaten == 170)  collectible.spawnCollectible();
 
     // Check if frightened timer expired, notify ghosts and resume scatter/chase timer
     if (huntedTimer.isRunning() && huntedTimer.msEllapsed() / 1000.0 >= 10.0)  // 10seconds duration?
@@ -165,11 +188,10 @@ void Level::update()
         if (obsState == GhostState::Frightened && colliding) 
         { 
             observer->updateState(GhostState::Dead); 
-            score.displayGhostPoints(Util::coordsToPosition(observer->getCoords()));
+            score.displayPoints(ScoreDisplay::Points::GHOST_POINTS, Util::coordsToPosition(observer->getCoords()));
             // Pacman 'earns' a life every 10k points
             if (score.overThreshold()) ++lives;
-            paused = true;
-            huntedTimer.pauseTimer();
+            pause();
         }
         // This ghost came back to life
         else if (obsState == GhostState::Dead && observer->isNearHome()) observer->updateState(huntedTimer.isRunning() ? GhostState::Frightened : GhostState::Scatter);

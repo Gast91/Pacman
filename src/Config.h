@@ -59,6 +59,8 @@ namespace Config
     {
         // Individual Sprite Size
         constexpr int size = 16;
+        // Collectible_points2 sprite size
+        constexpr int collectSize = 20;
         constexpr const char* bckgnd   = "resources/sprites/background.png";
         constexpr const char* pacman   = "resources/sprites/pacman_spritesheet.png";
         constexpr const char* pacDeath = "resources/sprites/pacman_death_spritesheet.png";
@@ -76,8 +78,20 @@ namespace Config
     const std::map <std::pair<int, int>, unsigned int> offsetDict = { {{ EAST.x,  EAST.y }, 0 }, {{ WEST.x,  WEST.y }, 2 },
                                                                       {{ NORTH.x, NORTH.y}, 4 }, {{ SOUTH.x, SOUTH.y}, 6 }};
 
-    const std::map<int, int> collectiblePoints = { {1, 100}, {2, 300}, {3, 500}, {4, 500}, {5, 700}, {6, 700}, {7, 1000},
-                                                   {8, 1000}, {9, 2000}, {10, 2000}, {11, 3000}, {12, 3000}, {13, 5000} };
+    const std::map<int, std::pair<int, sf::IntRect>> collectiblePoints = 
+    { {1,  {100,  {Config::sprites::size * 0, 0,                     Config::sprites::size,        Config::sprites::size}}},
+      {2,  {300,  {Config::sprites::size * 1, 0,                     Config::sprites::size,        Config::sprites::size}}},
+      {3,  {500,  {Config::sprites::size * 2, 0,                     Config::sprites::size,        Config::sprites::size}}},
+      {4,  {500,  {Config::sprites::size * 2, 0,                     Config::sprites::size,        Config::sprites::size}}},
+      {5,  {700,  {Config::sprites::size * 3, 0,                     Config::sprites::size,        Config::sprites::size}}},
+      {6,  {700,  {Config::sprites::size * 3, 0,                     Config::sprites::size,        Config::sprites::size}}},
+      {7,  {1000, {Config::sprites::size * 0, Config::sprites::size, Config::sprites::collectSize, Config::sprites::size}}},
+      {8,  {1000, {Config::sprites::size * 0, Config::sprites::size, Config::sprites::collectSize, Config::sprites::size}}},
+      {9,  {2000, {Config::sprites::size * 1, Config::sprites::size, Config::sprites::collectSize, Config::sprites::size}}},
+      {10, {2000, {Config::sprites::size * 1, Config::sprites::size, Config::sprites::collectSize, Config::sprites::size}}},
+      {11, {3000, {Config::sprites::size * 2, Config::sprites::size, Config::sprites::collectSize, Config::sprites::size}}},
+      {12, {3000, {Config::sprites::size * 2, Config::sprites::size, Config::sprites::collectSize, Config::sprites::size}}},
+      {13, {5000, {Config::sprites::size * 3, Config::sprites::size, Config::sprites::collectSize, Config::sprites::size}}}};
 }
 
 namespace Util
@@ -142,7 +156,7 @@ namespace Util
 //     - hunted anim 'flashes' only during the end of hunted period - otherwise it stays blue (do they swap back to hunting when they reach home or wait for hunted to end?)
 //     - ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
 //     - inky (and another) very rarely gets in the ghost house without being frightened
+//     - pause(), resume() and the Timers need work for correct detection of which was running before pause
 // Additions:
-//     - fruit points sprite size is 16 for up to 700pts, size 20 for rest..
 //     - Game sound
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

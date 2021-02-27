@@ -34,6 +34,9 @@ private:
     void nextLevel();   // Reset game and increase level
     void reset();       // Reset level - pacman died
     void restart();     // Restart the whole game
+
+    void pause();
+    void resume();
 public:
     Level();
 
