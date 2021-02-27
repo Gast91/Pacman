@@ -6,7 +6,6 @@ class Level;
 class Lives : public sf::Drawable
 {
 private:
-    friend Level;
     const std::unique_ptr<sf::Texture> livesTexture; // kind of a waste since sprite already exists in pacMovement
     const std::unique_ptr<sf::Sprite> livesSprite;
     int lives;
@@ -36,7 +35,7 @@ public:
 
     void reset()
     {
-        lives = 2;  // we may specify a different number!
+        lives = 2;  // we may specify a different number at the start..
         livesSprite->setTextureRect({ 0, 0, Config::sprites::size * lives, Config::sprites::size });
     }
 

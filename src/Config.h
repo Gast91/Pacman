@@ -75,6 +75,16 @@ namespace Config
         constexpr const char* collect  = "resources/sprites/collectibles.png";
     }
 
+    namespace sounds
+    {
+        constexpr const char* chomp = "resources/sounds/pacman_chomp.wav";
+        constexpr const char* death = "resources/sounds/pacman_death.wav";
+        constexpr const char* fruit = "resources/sounds/pacman_eat_fruit.wav";
+        constexpr const char* ghost = "resources/sounds/pacman_eat_ghost.wav";
+        constexpr const char* life  = "resources/sounds/pacman_extra_life.wav";
+        constexpr const char* intro = "resources/sounds/pacman_intro.wav";
+    }
+
     const std::map <std::pair<int, int>, unsigned int> offsetDict = { {{ EAST.x,  EAST.y }, 0 }, {{ WEST.x,  WEST.y }, 2 },
                                                                       {{ NORTH.x, NORTH.y}, 4 }, {{ SOUTH.x, SOUTH.y}, 6 }};
 

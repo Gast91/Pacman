@@ -1,11 +1,12 @@
 #pragma once
-#include <array>
+#include <array>      // this is part of SoundManager
 #include <fstream>
 
 #include "Tile.h"
 #include "Timer.h"
 #include "IObserver.h"
 #include "Banner.h"
+//#include "SoundManager.h"
 
 using TileGrid = std::array<std::array<std::unique_ptr<Tile>, Config::COLS>, Config::ROWS>;
 
