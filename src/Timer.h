@@ -12,8 +12,8 @@ private:
     bool running = false;
     bool paused = false;
 public:
-    bool isPaused()  { return paused; }
-    bool isRunning() { return running; }
+    bool isPaused()  const { return paused; }
+    bool isRunning() const { return running; }
 
     void startTimer()
     {

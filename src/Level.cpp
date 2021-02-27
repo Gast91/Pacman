@@ -111,7 +111,7 @@ void Level::begin()
 void Level::update()
 {
     if (!start) return;
-    if (paused) { paused = false; huntedTimer.resumeTimer(); }
+    if (paused) { paused = false; huntedTimer.resumeTimer(); }  // resume timers that SHOULD BE RESUMED - PAUSE will happen for fruits also
     if (over && pacmanObserver->playDeath() && lives.getLives() > 0) reset();
     else if (over && pacmanObserver->playDeath() && lives.getLives() == 0) restart();
     else if (over) return;
@@ -138,6 +138,10 @@ void Level::update()
         // Pacman 'earns' a life every 10k points
         if (score.overThreshold()) ++lives;
     }
+
+    // Check whether to spawn or consume a collectible
+    if (collectible.isVisible() && pacmanCoords == Config::FRUIT_COORDS) score += collectible.eat();
+    else if (dotsEaten == 70 || dotsEaten == 170)  collectible.spawnCollectible();  // paused = true; AND TIMERS! make a function that pauses timers that should be paused?
 
     // Check if frightened timer expired, notify ghosts and resume scatter/chase timer
     if (huntedTimer.isRunning() && huntedTimer.msEllapsed() / 1000.0 >= 10.0)  // 10seconds duration?

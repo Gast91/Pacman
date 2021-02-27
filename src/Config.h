@@ -143,8 +143,6 @@ namespace Util
 //     - ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
 //     - inky (and another) very rarely gets in the ghost house without being frightened
 // Additions:
-//     - 70 dots and then 170 --> fruit (time limit?) - how often they appear in a level?
-//     - cherries(100pts - lvl1) | Strawb(300pts - lvl2) | Orange(500pts - lvl3,4) | Apple(700pts - lvl5,6) | Grape(1kpts - lvl7,8) | Ship(2kpts - lvl10)
-//       Bell(3kpts - lvl11,12) | Key(5kpts - lvl13+) - score size is 16 for up to 700pts, size 20 for rest..
+//     - fruit points sprite size is 16 for up to 700pts, size 20 for rest..
 //     - Game sound
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

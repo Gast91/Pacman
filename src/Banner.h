@@ -59,6 +59,10 @@ private:
     bool started = false;
     bool mutable showingGhostPoints = false;
 
+    /*bool mutable showingFruitPoints = false;
+    const std::unique_ptr<sf::Texture> fruitPointsTexture;
+    std::unique_ptr<sf::Sprite> fruitPoints;*/
+
     void updateDisplay() 
     {
         scoreText->setString(started ? std::to_string(score) : Config::startMsg);
@@ -66,7 +70,7 @@ private:
         scoreText->setPosition(startXPos, Config::HEIGHT - Config::BANNER_HEIGHT);
     }
 public:
-    ScoreDisplay() : font(Util::loadFont()), ghostPointsTexture(Util::loadTexture(Config::sprites::ghostP)), ghostPoints(Util::createSprite(*ghostPointsTexture))
+    ScoreDisplay() : font(Util::loadFont()), ghostPointsTexture(Util::loadTextureTrans(Config::sprites::ghostP)), ghostPoints(Util::createSprite(*ghostPointsTexture))
     {
         scoreText = std::make_unique<sf::Text>();
         scoreText->setFont(*font);
@@ -92,6 +96,12 @@ public:
 
         updateDisplay();
     }
+
+    /*enum Points {GHOST_POINTS, FRUIT_POINTS};
+    void displayPoints(const Points pointType, const sf::Vector2f& displayPos)
+    {
+        if (pointType == GHOST_POINTS)
+    }*/
 
     bool overThreshold() 
     { 
@@ -128,29 +138,58 @@ class Collectible : public sf::Drawable
 private:
     int level = 1;
     const std::unique_ptr<sf::Texture> collectTexture;
+    // This sprite is drawn from top right since it 'grows' leftward
     std::unique_ptr<sf::Sprite> collectSprite;
+
+    // Fruit that gets spawn into the world
+    std::unique_ptr<sf::Sprite> fruitSprite;
+    mutable bool fruitVisible = false;
+    mutable Timer fruitVisibleTimer;
 public:
     Collectible() 
-        : collectTexture(Util::loadTexture(Config::sprites::collect)), 
-          collectSprite(Util::createSprite(*collectTexture, { Config::WIDTH, Config::HEIGHT - Config::BANNER_HEIGHT }))
+        : collectTexture(Util::loadTextureTrans(Config::sprites::collect)), 
+          collectSprite(Util::createSprite(*collectTexture, { Config::WIDTH, Config::HEIGHT - Config::BANNER_HEIGHT })),
+          fruitSprite(Util::createSprite(*collectTexture, Util::coordsToPosition(Config::FRUIT_COORDS)))
     {
-        // This sprite is drawn from top right since it 'grows' leftward
         collectSprite->setTextureRect({ (12 - level) * Config::sprites::size, 0, Config::sprites::size * level, Config::sprites::size });
         collectSprite->setOrigin({ static_cast<float>(Config::sprites::size * level), 0.0f });
+
+        fruitSprite->setTextureRect({ (12 - level) * Config::sprites::size, 0, Config::sprites::size, Config::sprites::size });
     }
 
-    // spawn collectible?
-    // collectible also has a score value
+    bool isVisible() const { return fruitVisible; }
+
+    void spawnCollectible()
+    {
+        fruitVisible = true;
+        fruitVisibleTimer.startTimer();
+    }
+
+    int eat()
+    {
+        fruitVisible = false;
+        fruitVisibleTimer.stopTimer();
+        return Config::collectiblePoints.at(level);
+    }
 
     Collectible& operator++()
     {
         if (level >= 12) return *this;  // from level 12 onwards the collectible is the key (last/leftmost sprite)
         ++level;
-        // This sprite is drawn from top right since it 'grows' leftward
         collectSprite->setTextureRect({ (12 - level) * Config::sprites::size, 0, Config::sprites::size * level, Config::sprites::size });
+        fruitSprite->setTextureRect({ (12 - level) * Config::sprites::size, 0, Config::sprites::size, Config::sprites::size });
         collectSprite->setOrigin({ static_cast<float>(Config::sprites::size * level), 0.0f });
         return *this;
     }
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const { target.draw(*collectSprite); }
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const 
+    { 
+        target.draw(*collectSprite);
+        if (fruitVisible && fruitVisibleTimer.isRunning() && fruitVisibleTimer.msEllapsed() / 1000 < 10) target.draw(*fruitSprite);
+        else if (fruitVisibleTimer.isRunning() && fruitVisibleTimer.msEllapsed() / 1000 >= 10)
+        {
+            fruitVisible = false;
+            fruitVisibleTimer.stopTimer();
+        }
+    }
 };
