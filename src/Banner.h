@@ -13,7 +13,7 @@ public:
     Lives(int totalLives = 2) 
         : livesTexture(Util::loadTexture(Config::sprites::lives)),
           lives(totalLives), 
-          livesSprite(Util::createSprite(*livesTexture, {0, Config::HEIGHT - Config::BANNER_HEIGHT }))
+          livesSprite(Util::createSprite(*livesTexture, {0, Config::HEIGHT - Config::BOT_BANNER_H }))
     {
         livesTexture->setRepeated(true);
         livesSprite->setTextureRect({ 0, 0, Config::sprites::size * lives, Config::sprites::size });
@@ -67,7 +67,7 @@ private:
     {
         scoreText->setString(started ? std::to_string(score) : Config::startMsg);
         const float startXPos = static_cast<float>(Config::WIDTH) / 2.0f - scoreText->getLocalBounds().width / 2.0f;
-        scoreText->setPosition(startXPos, Config::HEIGHT - Config::BANNER_HEIGHT);
+        scoreText->setPosition(startXPos, 0);
     }
 public:
     ScoreDisplay() : 
@@ -162,7 +162,7 @@ private:
 public:
     Collectible() 
         : collectTexture(Util::loadTextureTrans(Config::sprites::collect)), 
-          collectSprite(Util::createSprite(*collectTexture, { Config::WIDTH, Config::HEIGHT - Config::BANNER_HEIGHT })),
+          collectSprite(Util::createSprite(*collectTexture, { Config::WIDTH, Config::HEIGHT - Config::BOT_BANNER_H })),
           fruitSprite(Util::createSprite(*collectTexture, Util::coordsToPosition(Config::FRUIT_COORDS)))
     {
         collectSprite->setTextureRect({ (12 - level) * Config::sprites::size, 0, Config::sprites::size * level, Config::sprites::size });

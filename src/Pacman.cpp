@@ -29,8 +29,7 @@ void Pacman::reset()
 {
     nextTurn = EAST;
     gridPosition = initialGridPos;
-    setPosition(Config::ENTITY_SIZE * gridPosition.x, Config::ENTITY_SIZE * gridPosition.y);
-    /*setTexture(movAnim.getTexture());*/
+    setPosition(Config::ENTITY_SIZE * gridPosition.x, Config::ENTITY_SIZE * gridPosition.y + Config::TOP_BANNER_H);
     setTexture(deathAnim.getTexture());
     setTextureRect(deathAnim.getFirst());
     deathAnim.reset();

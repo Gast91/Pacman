@@ -19,9 +19,10 @@ namespace Config
   //-----------------------------------------------------------------
   //--------------------GAME WINDOW SIZE-----------------------------
   //-----------------------------------------------------------------
-    constexpr unsigned int BANNER_HEIGHT = static_cast<unsigned int>(16 * SCALE);
+    constexpr unsigned int BOT_BANNER_H  = static_cast<unsigned int>(16 * SCALE);
+    constexpr unsigned int TOP_BANNER_H  = static_cast<unsigned int>(16 * SCALE);
     constexpr unsigned int WIDTH         = static_cast<unsigned int>(448 * SCALE);
-    constexpr unsigned int HEIGHT        = static_cast<unsigned int>(496 * SCALE + BANNER_HEIGHT);
+    constexpr unsigned int HEIGHT        = static_cast<unsigned int>(496 * SCALE + BOT_BANNER_H + TOP_BANNER_H);
   //-----------------------------------------------------------------
   //--------------------GAME ENTITIES SIZES--------------------------
   //-----------------------------------------------------------------
@@ -54,6 +55,10 @@ namespace Config
         constexpr sf::Keyboard::Key RIGHT = sf::Keyboard::Key::D;
         constexpr sf::Keyboard::Key ESC   = sf::Keyboard::Key::Escape;
         constexpr sf::Keyboard::Key START = sf::Keyboard::Key::Space;
+        constexpr sf::Keyboard::Key VOL_U = sf::Keyboard::Key::Add;
+        constexpr sf::Keyboard::Key VOL_D = sf::Keyboard::Key::Subtract;
+        constexpr sf::Keyboard::Key MUTE  = sf::Keyboard::Key::M;
+        constexpr sf::Mouse::Button L_BUT = sf::Mouse::Button::Left;
     }
 
     namespace sprites
@@ -74,6 +79,7 @@ namespace Config
         constexpr const char* ghostP   = "resources/sprites/ghost_points.png";
         constexpr const char* collectP = "resources/sprites/collectible_points.png";
         constexpr const char* collect  = "resources/sprites/collectibles.png";
+        constexpr const char* sound    = "resources/sprites/sound.png";
     }
 
     namespace sounds
@@ -172,7 +178,7 @@ namespace Util
         return distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
     }
 
-    inline sf::Vector2f coordsToPosition(sf::Vector2i coords) { return { coords.x * Config::ENTITY_SIZE, coords.y * Config::ENTITY_SIZE }; }
+    inline sf::Vector2f coordsToPosition(sf::Vector2i coords) { return { coords.x * Config::ENTITY_SIZE, coords.y * Config::ENTITY_SIZE + Config::TOP_BANNER_H }; }
 }
 
 // TODO:
@@ -186,6 +192,4 @@ namespace Util
 //     - inky (and another) very rarely gets in the ghost house without being frightened
 //     - pause(), resume() and the Timers need work for correct detection of which was running before pause
 //     - if game ends, or next level while in hunted mode, ghosts textures are messed up before starting to move
-// Additions:
-//     - Mute functionality via M keybind, clicable sound icon that mutes etc, +- for increasing sound and move it (along with score) to a banner up top?
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -54,6 +54,9 @@ public:
 
     void update();
     void begin();
+    void adjustSound(const float vol);
+    void toggleSound(const sf::Vector2f& mousePos);
+    void toggleSound();
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 };

@@ -6,9 +6,15 @@
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(Config::WIDTH, Config::HEIGHT), "Pacman", sf::Style::Close);
+    if (sf::Image icon; icon.loadFromFile(Config::sprites::lives))
+    {
+        icon.createMaskFromColor(sf::Color::Black);
+        icon.flipHorizontally();
+        window.setIcon(Config::sprites::size, Config::sprites::size, icon.getPixelsPtr());
+    }
     window.setFramerateLimit(10); // less?
 
-    // Instantiate level, pacman and all the ghosts
+    // Instantiate level, pacman and all the ghosts - EXCEPTIONS
     std::unique_ptr<Level> level = std::make_unique<Level>();
     const AStar aStar{ level.get() };
     std::unique_ptr<Pacman> pacman = std::unique_ptr<Pacman>(new Pacman(level.get(), { 13, 17 }));
@@ -31,31 +37,26 @@ int main()
         {
             switch (event.type)
             {
-            case sf::Event::Closed:
-                window.close();
-                break;
+            case sf::Event::Closed: window.close(); break;    
             case sf::Event::KeyPressed:
                 switch (event.key.code)
                 {
-                case Config::Keybinds::ESC:
-                    window.close();
-                    break;
-                case Config::Keybinds::UP:
-                    pacman->changeDirection(NORTH);
-                    break;
-                case Config::Keybinds::DOWN:
-                    pacman->changeDirection(SOUTH);
-                    break;
-                case Config::Keybinds::LEFT:
-                    pacman->changeDirection(WEST);
-                    break;
-                case Config::Keybinds::RIGHT:
-                    pacman->changeDirection(EAST);
-                    break;
-                case Config::Keybinds::START:
-                    if (!level->hasStarted()) level->begin();
-                    break;
+                case Config::Keybinds::ESC:     window.close();                           break;
+                case Config::Keybinds::UP:      pacman->changeDirection(NORTH);           break;   
+                case Config::Keybinds::DOWN:    pacman->changeDirection(SOUTH);           break;  
+                case Config::Keybinds::LEFT:    pacman->changeDirection(WEST);            break;      
+                case Config::Keybinds::RIGHT:   pacman->changeDirection(EAST);            break;
+                case Config::Keybinds::START:   if (!level->hasStarted()) level->begin(); break;   
+                case Config::Keybinds::MUTE:    level->toggleSound();                     break;
+                case Config::Keybinds::VOL_U:
+                case Config::Keybinds::VOL_D:
+                    level->adjustSound(event.KeyPressed == Config::Keybinds::VOL_U ? 10.0f : -10.0f); break;
                 }
+                break;
+            case sf::Event::MouseWheelScrolled: level->adjustSound(event.mouseWheelScroll.delta); break;
+            case sf::Event::MouseButtonPressed: 
+                if (sf::Mouse::isButtonPressed(Config::Keybinds::L_BUT)) 
+                    level->toggleSound(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
                 break;
             default: break;
             }

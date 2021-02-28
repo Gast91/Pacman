@@ -14,13 +14,13 @@ Level::Level() :
             for (int x = 0; x < Config::ROWS; ++x)
             {
                 if (!(infile >> token)) throw std::exception("Unable to read grid file");
-                grid[x][y].reset(new Tile({ x, y }, { x * Config::ENTITY_SIZE + Config::SCALED_OFFSET, y * Config::ENTITY_SIZE + Config::SCALED_OFFSET }, token));
+                grid[x][y].reset(new Tile({ x, y }, { x * Config::ENTITY_SIZE + Config::SCALED_OFFSET, y * Config::ENTITY_SIZE + Config::SCALED_OFFSET + Config::TOP_BANNER_H }, token));
             }
         }
         return grid; 
     }()),
     bgTexture(Util::loadTexture(Config::sprites::bckgnd)),
-    background(Util::createSprite(*bgTexture))
+    background(Util::createSprite(*bgTexture, { 0.0f, Config::TOP_BANNER_H }))
 {}
 
 void Level::registerPacman(PacmanObserver* pacObs) { pacmanObserver = pacObs; }
@@ -127,6 +127,10 @@ void Level::resume()  // these timers have issues
     if (huntedTimer.isPaused())       huntedTimer.resumeTimer();
 }
 
+void Level::adjustSound(const float vol) { soundManager.changeVolume(vol); }
+void Level::toggleSound(const sf::Vector2f& mousePos) { if (soundManager.isClicked(mousePos)) soundManager.toggleSound(); }
+void Level::toggleSound() { soundManager.toggleSound(); }
+
 void Level::update()
 {
     if (!start) return;
@@ -223,4 +227,5 @@ void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(lives);
     target.draw(score);
     target.draw(collectible);
+    target.draw(soundManager);
 }

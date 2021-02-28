@@ -103,7 +103,7 @@ void Ghost::reset()
 {
     state = GhostState::Chase;
     gridPosition = initialGridPos;
-    setPosition(Config::ENTITY_SIZE * gridPosition.x, Config::ENTITY_SIZE * gridPosition.y);
+    setPosition(Config::ENTITY_SIZE * gridPosition.x, Config::ENTITY_SIZE * gridPosition.y + Config::TOP_BANNER_H);
     setTexture(movAnim.getTexture());
     path.clear();
 }
@@ -115,7 +115,7 @@ const sf::VertexArray& Ghost::debugLines(const sf::Color color)
     for (int i = 0; i < path.size(); ++i)
     {
         pathLines[i].position = sf::Vector2f(path[i]->gridPosition.x * Config::ENTITY_SIZE + Config::SCALED_OFFSET,
-                                             path[i]->gridPosition.y * Config::ENTITY_SIZE + Config::SCALED_OFFSET);
+                                             path[i]->gridPosition.y * Config::ENTITY_SIZE + Config::SCALED_OFFSET + Config::TOP_BANNER_H);
         pathLines[i].color = color;
     }
     return pathLines;
