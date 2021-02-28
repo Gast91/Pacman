@@ -1,5 +1,6 @@
 # Pacman
-A Pacman arcade game clone
+![Pacman](preview.png?raw=true "Pacman")
+A Pacman arcade game clone.
 
 ## Getting Started
 
@@ -8,10 +9,15 @@ A Pacman arcade game clone
 * SFML library [SFML](https://github.com/SFML/SFML)
 
 ### Current Features
-* A* pathfinding & classic game style pathfinding
-* Semi-classic game logic (see limitations section)
-* Restarting/Resetting
-* Sounds
+* A* pathfinding & classic game style pathfinding.
+* Semi-classic game logic (see limitations section).
+
+### Controls
+* 'w','a','s','d' for Pacman movement.
+* 'space' for starting/restarting level.
+* '+','-' or mouse scroll wheel for volume control.
+* 'm' or clicking sound icon for toggling mute.
+* 'Esc' for exiting.
 
 ### In Progress
 
