@@ -1,6 +1,6 @@
 # Pacman
 <p align="center">
-  <img width="460" height="300" src="preview.png">
+  <img src="preview.png">
 </p>
 <br>A Pacman arcade game clone.
 
