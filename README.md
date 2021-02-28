@@ -1,6 +1,8 @@
 # Pacman
-![Pacman](preview.png?raw=true "Pacman")
-A Pacman arcade game clone.
+<p align="center">
+  <img width="460" height="300" src="preview.png">
+</p>
+<br>A Pacman arcade game clone.
 
 ## Getting Started
 
