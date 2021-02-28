@@ -190,6 +190,4 @@ namespace Util
 //     - hunted anim 'flashes' only during the end of hunted period - otherwise it stays blue (do they swap back to hunting when they reach home or wait for hunted to end?)
 //     - ghosts CAN use tunnels, but at decreased speed.. - teleporter neighbor?
 //     - inky (and another) very rarely gets in the ghost house without being frightened
-//     - pause(), resume() and the Timers need work for correct detection of which was running before pause
-//     - if game ends, or next level while in hunted mode, ghosts textures are messed up before starting to move
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -47,7 +47,7 @@ public:
         if ((state == GhostState::Waiting && aStar->canExit(30)) || (state != GhostState::Waiting && state != GhostState::Paused)) state = gs;
         else if (state == GhostState::Paused) state = GhostState::Waiting;
     }
-    virtual void reset() override { Ghost::reset(); state = GhostState::Waiting; }
+    virtual void reset() override { direction = EAST; Ghost::reset(); state = GhostState::Waiting; }
 };
 
 class Clyde : public Ghost
@@ -74,5 +74,5 @@ public:
         if ((state == GhostState::Waiting && aStar->canExit(80)) || (state != GhostState::Waiting && state != GhostState::Paused)) state = gs;
         else if (state == GhostState::Paused) state = GhostState::Waiting;
     }
-    virtual void reset() override { Ghost::reset(); state = GhostState::Waiting; }
+    virtual void reset() override { direction = WEST; Ghost::reset(); state = GhostState::Waiting; }
 };

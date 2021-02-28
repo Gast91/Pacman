@@ -72,7 +72,7 @@ void Ghost::move()
         {
             path.clear();
             aStar->getPath(path, gridPosition, target, direction);
-            if (!path.empty() && path.size() > 2)
+            if (!path.empty() && path.size() > 2) 
                 direction = path.at(1)->gridPosition - gridPosition;
             else changeDirection(target);
 
@@ -105,6 +105,8 @@ void Ghost::reset()
     gridPosition = initialGridPos;
     setPosition(Config::ENTITY_SIZE * gridPosition.x, Config::ENTITY_SIZE * gridPosition.y + Config::TOP_BANNER_H);
     setTexture(movAnim.getTexture());
+    // The ghost might be in the hunted state, update its anim
+    updateAnimation(direction);
     path.clear();
 }
 
