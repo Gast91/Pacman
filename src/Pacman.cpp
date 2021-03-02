@@ -19,7 +19,7 @@ bool Pacman::playDeath()
 void Pacman::teleport(int newX)
 {
     gridPosition.x = newX;
-    setPosition(gridPosition.x * Config::ENTITY_SIZE, gridPosition.y * Config::ENTITY_SIZE);
+    setPosition(gridPosition.x * Config::ENTITY_SIZE, gridPosition.y * Config::ENTITY_SIZE + Config::TOP_BANNER_H);
 }
 
 std::pair<sf::Vector2i, sf::Vector2i> Pacman::getMovement() const { return std::make_pair(gridPosition, direction); }
