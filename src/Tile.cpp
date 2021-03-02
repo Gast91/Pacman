@@ -6,6 +6,7 @@ Tile::Tile(sf::Vector2i gridCoords, sf::Vector2f pos, int type, Node* p) : type(
     if (Tile::type == TileType::Dot || Tile::type == TileType::BigDot)
     {
         sprite = std::make_unique<sf::CircleShape>(Tile::type == TileType::Dot ? Config::DOT_SIZE : Config::B_DOT_SIZE);
+        sprite->setOrigin(sprite->getRadius() / 2.0f, sprite->getRadius() / 2.0f);
         sprite->setFillColor(sf::Color::Yellow);
         sprite->setPosition(pos);
     }
